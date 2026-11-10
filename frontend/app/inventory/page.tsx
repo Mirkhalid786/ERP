@@ -36,6 +36,8 @@ import {
   InventoryValuation,
   UnitItem,
   MedicineUnitConversionItem,
+  isUnauthorized,
+  apiErrorMessage,
 } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
@@ -52,6 +54,7 @@ export default function InventoryPage() {
   const [valuation, setValuation] = useState<InventoryValuation | null>(null);
   const [units, setUnits] = useState<UnitItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
@@ -139,8 +142,13 @@ export default function InventoryPage() {
         setOpeningForm((prev) => ({ ...prev, medicine_id: String(medsRes[0].id) }));
         loadConversionsForOpening(medsRes[0].id);
       }
-    } catch {
-      router.replace("/login");
+    } catch (err) {
+      // Only a genuine 401 ends the session; other errors stay on the page.
+      if (isUnauthorized(err)) {
+        router.replace("/login");
+        return;
+      }
+      setLoadError(apiErrorMessage(err, "Failed to load inventory data. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -292,6 +300,11 @@ export default function InventoryPage() {
       />
 
       <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
+        {loadError && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">
+            {loadError}
+          </div>
+        )}
         {/* Header & KPI Summary */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>

@@ -540,7 +540,13 @@ class DirectPurchaseService:
                 batch = (await db.execute(batch_q)).scalar_one_or_none()
 
                 if batch is not None:
-                    if batch.current_stock_base < item.billed_qty_base:
+                    # The batch received billed + free quantities; cancellation
+                    # must reverse (and therefore require) BOTH, otherwise free
+                    # stock would survive a cancelled purchase with no backing.
+                    received_base = (
+                        item.billed_qty_base + item.free_qty_pack * item.conversion_factor
+                    ).quantize(TWO_PLACES)
+                    if batch.current_stock_base < received_base:
                         med_res = await db.execute(select(Medicine).where(Medicine.id == item.medicine_id))
                         med = med_res.scalar_one()
                         raise HTTPException(
@@ -548,16 +554,16 @@ class DirectPurchaseService:
                             detail=(
                                 f"Cannot cancel purchase '{invoice.invoice_number}': stock for medicine '{med.name}' "
                                 f"(batch '{item.batch_number}') has already been sold or consumed "
-                                f"(current stock: {batch.current_stock_base}, received: {item.billed_qty_base}). "
+                                f"(current stock: {batch.current_stock_base}, received: {received_base}). "
                                 f"The ERP prevents negative inventory. "
                                 f"Please record a Purchase Return or Supplier Credit Note for eligible remaining stock."
                             ),
                         )
-                    batches_to_reverse.append((batch, item))
+                    batches_to_reverse.append((batch, item, received_base))
 
         # All stock intact -> reverse stock movements atomically
-        for batch, item in batches_to_reverse:
-            batch.current_stock_base = (batch.current_stock_base - item.billed_qty_base).quantize(TWO_PLACES)
+        for batch, item, received_base in batches_to_reverse:
+            batch.current_stock_base = (batch.current_stock_base - received_base).quantize(TWO_PLACES)
             movement = StockMovement(
                 pharmacy_id=pharmacy_id,
                 medicine_id=item.medicine_id,
@@ -565,10 +571,10 @@ class DirectPurchaseService:
                 movement_type="PURCHASE_CANCEL",
                 reference_id=invoice.invoice_number,
                 reference_type="purchase_cancel",
-                quantity_base=-item.billed_qty_base,
+                quantity_base=-received_base,
                 balance_after_base=batch.current_stock_base,
                 unit_cost=batch.cost_per_base_unit,
-                total_cost=round_cur(item.billed_qty_base * batch.cost_per_base_unit),
+                total_cost=round_cur(received_base * batch.cost_per_base_unit),
                 reason=f"Purchase Cancellation: {payload.reason.strip()}",
                 notes=f"Reversal of purchase bill {invoice.invoice_number}",
                 user_id=user.id,

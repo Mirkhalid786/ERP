@@ -25,7 +25,7 @@ import {
   AlertCircle,
   Eye,
 } from "lucide-react";
-import { api, CurrentUser, SupplierItem, SupplierCreatePayload } from "@/lib/api";
+import { api, CurrentUser, SupplierItem, SupplierCreatePayload, isUnauthorized, apiErrorMessage } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
 const GSTIN_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
@@ -52,6 +52,7 @@ export default function SuppliersPage() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [suppliers, setSuppliers] = useState<SupplierItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
 
@@ -109,8 +110,13 @@ export default function SuppliersPage() {
 
       const data = await api.getSuppliers();
       setSuppliers(data);
-    } catch {
-      router.push("/login");
+    } catch (err) {
+      // Only a genuine 401 ends the session; other errors stay on the page.
+      if (isUnauthorized(err)) {
+        router.push("/login");
+        return;
+      }
+      setLoadError(apiErrorMessage(err, "Failed to load suppliers. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -261,6 +267,11 @@ export default function SuppliersPage() {
       <Navbar user={user} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+        {loadError && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">
+            {loadError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

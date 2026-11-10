@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { AlertCircle, Loader2, X } from "lucide-react";
-import { api, ApiError, CurrentUser } from "@/lib/api";
+import { api, ApiError, CurrentUser, isUnauthorized } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -12,11 +12,23 @@ import { Navbar } from "@/components/Navbar";
 export function useStaff() {
   const router = useRouter();
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   useEffect(() => {
-    api.getCurrentUser().then(setUser).catch(() => router.push("/login"));
+    api
+      .getCurrentUser()
+      .then(setUser)
+      .catch((err) => {
+        // Only a genuine 401 ends the session. A 403/500/network error must
+        // not log out a valid user — surface it and keep them on the page.
+        if (isUnauthorized(err)) {
+          router.push("/login");
+          return;
+        }
+        setAuthError(errorText(err));
+      });
   }, [router]);
   const can = useCallback((perm: string) => !!user?.permissions.includes(perm), [user]);
-  return { user, can };
+  return { user, can, authError };
 }
 
 export const errorText = (err: unknown): string =>

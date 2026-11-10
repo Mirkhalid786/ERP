@@ -597,6 +597,129 @@ async def test_scenario_g_cancel_blocked_when_stock_consumed(client: AsyncClient
     assert check_inv.json()["status"] == "POSTED"
 
 
+# ── Scenario F2: Cancel a posted purchase that includes FREE goods ────────────
+@pytest.mark.asyncio
+async def test_scenario_f2_cancel_purchase_with_free_goods_reverses_all_stock(client: AsyncClient):
+    """
+    Regression: a batch receives billed + free quantities. Cancellation must
+    reverse BOTH — previously only the billed quantity was reversed, leaving
+    free stock in place with no purchase backing it.
+    10 strips billed + 2 free strips = 120 tablets received; after cancel -> 0.
+    """
+    env = await setup_environment(client)
+    sup = env["supplier"]
+    med1 = env["med1"]
+    strip = env["strip_unit"]
+    gst_12 = env["gst_12"]
+
+    exp_date = (date.today() + timedelta(days=365)).isoformat()
+
+    payload = {
+        "supplier_id": sup["id"],
+        "invoice_number": "INV-CANCEL-FREE",
+        "invoice_date": date.today().isoformat(),
+        "post_now": True,
+        "items": [
+            {
+                "medicine_id": med1["id"],
+                "packaging_unit_id": strip["id"],
+                "quantity": "10.00",
+                "free_quantity": "2.00",
+                "purchase_rate": "50.00",
+                "tax_rate_id": gst_12["id"],
+                "batch_number": "FREE-CANCEL-1",
+                "expiry_date": exp_date,
+                "mrp": "70.00",
+            }
+        ],
+    }
+
+    resp = await client.post("/api/v1/purchases/direct", json=payload)
+    assert resp.status_code == 201, resp.text
+    inv = resp.json()
+    assert inv["status"] == "POSTED"
+
+    med1_resp = await client.get(f"/api/v1/medicines/{med1['id']}")
+    assert Decimal(str(med1_resp.json()["current_stock_base"])) == Decimal("120.0000")
+
+    cancel_resp = await client.post(
+        f"/api/v1/purchases/direct/{inv['id']}/cancel",
+        json={"reason": "Supplier billed the wrong pharmacy"},
+    )
+    assert cancel_resp.status_code == 200, cancel_resp.text
+    assert cancel_resp.json()["status"] == "CANCELLED"
+
+    # ALL stock (billed + free) must be reversed
+    med1_after = await client.get(f"/api/v1/medicines/{med1['id']}")
+    assert Decimal(str(med1_after.json()["current_stock_base"])) == Decimal("0.0000")
+
+
+# ── Scenario G2: Cancel blocked when only FREE units were consumed ────────────
+@pytest.mark.asyncio
+async def test_scenario_g2_cancel_blocked_when_free_stock_consumed(client: AsyncClient):
+    """
+    Regression: 10 billed + 2 free = 120 tablets. If 10 tablets are consumed,
+    stock (110) is still >= billed qty (100) — but the purchase as a whole has
+    been partly consumed, so cancellation must be blocked with 422.
+    """
+    env = await setup_environment(client)
+    sup = env["supplier"]
+    med1 = env["med1"]
+    strip = env["strip_unit"]
+    gst_12 = env["gst_12"]
+
+    exp_date = (date.today() + timedelta(days=365)).isoformat()
+
+    payload = {
+        "supplier_id": sup["id"],
+        "invoice_number": "INV-CANCEL-FREE-CONSUMED",
+        "invoice_date": date.today().isoformat(),
+        "post_now": True,
+        "items": [
+            {
+                "medicine_id": med1["id"],
+                "packaging_unit_id": strip["id"],
+                "quantity": "10.00",
+                "free_quantity": "2.00",
+                "purchase_rate": "50.00",
+                "tax_rate_id": gst_12["id"],
+                "batch_number": "FREE-CONSUMED-1",
+                "expiry_date": exp_date,
+                "mrp": "70.00",
+            }
+        ],
+    }
+
+    resp = await client.post("/api/v1/purchases/direct", json=payload)
+    assert resp.status_code == 201, resp.text
+    inv = resp.json()
+
+    batches_resp = await client.get("/api/v1/batches")
+    batch = [b for b in batches_resp.json() if b["batch_number"] == "FREE-CONSUMED-1"][0]
+
+    adj_resp = await client.post("/api/v1/inventory/adjustments", json={
+        "reason_code": "DAMAGE",
+        "notes": "Damaged stock",
+        "items": [
+            {
+                "batch_id": batch["id"],
+                "physical_stock_base": "110.0000",
+            }
+        ],
+    })
+    assert adj_resp.status_code == 201, adj_resp.text
+
+    cancel_resp = await client.post(
+        f"/api/v1/purchases/direct/{inv['id']}/cancel",
+        json={"reason": "Accidental entry"},
+    )
+    assert cancel_resp.status_code == 422, cancel_resp.text
+    assert "sold or consumed" in cancel_resp.json()["detail"]
+
+    check_inv = await client.get(f"/api/v1/purchases/invoices/{inv['id']}")
+    assert check_inv.json()["status"] == "POSTED"
+
+
 # ── Scenario H: Idempotency & duplicate posting prevention ────────────────────
 @pytest.mark.asyncio
 async def test_scenario_h_duplicate_posting_prevention(client: AsyncClient):

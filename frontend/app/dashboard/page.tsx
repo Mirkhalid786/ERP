@@ -17,6 +17,8 @@ import {
   LowStockAlertItem,
   ExpiryAlertItem,
   StockMovementItem,
+  isUnauthorized,
+  apiErrorMessage,
 } from "@/lib/api";
 import {
   Shield,
@@ -54,6 +56,7 @@ export default function DashboardPage() {
   const [recentMovements, setRecentMovements] = useState<StockMovementItem[]>([]);
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -108,7 +111,13 @@ export default function DashboardPage() {
         if (exp.status === "fulfilled") setExpiredAlerts(exp.value);
         if (movs.status === "fulfilled") setRecentMovements(movs.value);
       } catch (err) {
-        router.replace("/login");
+        // Only a genuine 401 ends the session; other errors (403/500/network)
+        // must not log out a valid user — show the error on the page instead.
+        if (isUnauthorized(err)) {
+          router.replace("/login");
+          return;
+        }
+        setLoadError(apiErrorMessage(err, "Failed to load the dashboard. Please try again."));
       } finally {
         setLoading(false);
       }
@@ -137,6 +146,11 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
+        {loadError && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">
+            {loadError}
+          </div>
+        )}
         {/* Sections can be hidden or reordered per user (My Appearance); their content and data are unchanged */}
         <DashSection id="kpis">
         {/* Phase 2 Inventory KPIs Banner */}

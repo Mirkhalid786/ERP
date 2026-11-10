@@ -908,6 +908,24 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * True only for a genuine authentication failure (HTTP 401).
+ * Pages must redirect to /login ONLY when this is true — a 403 (permission
+ * denied), 404, 422 or 500 must never log out or redirect a valid user.
+ */
+export function isUnauthorized(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const e = err as { status?: unknown; statusCode?: unknown };
+  return e.status === 401 || e.statusCode === 401;
+}
+
+/** Human-readable message for a failed API call, for inline error states. */
+export function apiErrorMessage(err: unknown, fallback = "Something went wrong while loading data. Please try again."): string {
+  if (err instanceof ApiError) return err.detail || err.message || fallback;
+  if (err instanceof Error) return err.message || fallback;
+  return fallback;
+}
+
 const FIELD_LABELS: Record<string, string> = { gstin: "GSTIN", state_code: "State code", name: "Name" };
 
 /** Turn FastAPI/Pydantic validation details into readable text plus per-field messages (never raw JSON). */

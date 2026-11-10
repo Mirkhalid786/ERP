@@ -10,6 +10,7 @@ from sqlalchemy import select, func, or_, and_, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.clock import today_local
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_permission
 from app.models.auth import User, AuditLog
@@ -94,6 +95,9 @@ async def list_medicines(
         q = q.where(Medicine.requires_prescription == requires_prescription)
 
     if low_stock_only:
+        # Usable stock only: active, non-expired batches — identical rule to
+        # the /inventory/alerts/low-stock endpoint (expired stock must not
+        # make a medicine look sufficiently stocked).
         batch_stock_subq = (
             select(
                 MedicineBatch.medicine_id.label("med_id"),
@@ -102,6 +106,7 @@ async def list_medicines(
             .where(
                 MedicineBatch.pharmacy_id == current_user.pharmacy_id,
                 MedicineBatch.is_active == True,
+                MedicineBatch.expiry_date >= today_local(),
             )
             .group_by(MedicineBatch.medicine_id)
             .subquery()

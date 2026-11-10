@@ -24,6 +24,8 @@ import {
   ManufacturerItem,
   UnitItem,
   TaxCalculationResult,
+  isUnauthorized,
+  apiErrorMessage,
 } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
@@ -35,6 +37,7 @@ export default function MastersPage() {
   const [manufacturers, setManufacturers] = useState<ManufacturerItem[]>([]);
   const [units, setUnits] = useState<UnitItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<"taxes" | "categories" | "manufacturers" | "units">("taxes");
@@ -92,8 +95,13 @@ export default function MastersPage() {
       setCategories(cats);
       setManufacturers(mfgs);
       setUnits(u);
-    } catch {
-      router.replace("/login");
+    } catch (err) {
+      // Only a genuine 401 ends the session; other errors stay on the page.
+      if (isUnauthorized(err)) {
+        router.replace("/login");
+        return;
+      }
+      setLoadError(apiErrorMessage(err, "Failed to load masters data. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -226,6 +234,11 @@ export default function MastersPage() {
       <Navbar user={user} />
 
       <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
+        {loadError && (
+          <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">
+            {loadError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
