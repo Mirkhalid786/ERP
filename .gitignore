@@ -1,0 +1,63 @@
+# Secrets and environment
+.env
+.env.local
+.env.*.local
+*.secret
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Alembic — keep versions in git, exclude cache
+backend/alembic/__pycache__/
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.npm/
+frontend/.eslintcache
+*.tsbuildinfo
+
+# Docker
+.docker/
+
+# Backups (runtime-generated)
+backups/
+*.sql
+*.sql.gz
+*.dump
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local tooling & temporary scratch scripts
+/.claude/
+/scratch/

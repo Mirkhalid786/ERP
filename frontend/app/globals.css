@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Colours come from the theme engine (lib/theme.ts), which re-points Tailwind's palette
+ * variables (--color-slate-*, --color-emerald-* ...) for the chosen theme and light/dark mode.
+ * The semantic aliases below are for new components; existing screens use the palette classes directly.
+ */
+:root {
+  --app-bg: var(--color-slate-950);
+  --app-surface: var(--color-slate-900);
+  --app-surface-2: var(--color-slate-800);
+  --app-border: var(--color-slate-800);
+  --app-text: var(--color-slate-100);
+  --app-muted: var(--color-slate-400);
+  --app-primary: var(--color-emerald-500);
+  --app-primary-strong: var(--color-emerald-600);
+  --app-on-primary: #ffffff;
+  --app-sidebar: var(--color-slate-900);
+  --app-focus: var(--color-emerald-500);
+  --app-radius: 0.75rem;
+  --app-radius-sm: 0.5rem;
+  --app-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+  --app-sidebar-w: 15.5rem;
+  --app-sidebar-w-collapsed: 4.5rem;
+  /* Backwards-compatible names used before the theme engine */
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+}
+
+html {
+  background-color: var(--app-bg);
+}
+
+body {
+  background-color: var(--app-bg);
+  color: var(--app-text);
+}
+
+/* Compact density scales every rem-based size (spacing, text, controls) slightly down */
+html[data-density="compact"] {
+  font-size: 14.5px;
+}
+
+/* Visible keyboard focus everywhere, in the theme's primary colour */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--app-focus);
+  outline-offset: 2px;
+}
+
+/* Disabled controls look disabled in every theme */
+:where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+}
+
+/* Applying a theme: no colour transitions for that frame */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
+}
+
+/* Text on primary-coloured buttons */
+.text-on-primary {
+  color: var(--app-on-primary);
+}
+
+/* Application shell: the sidebar is fixed, so page content is offset by its width on wide screens */
+@media (min-width: 1024px) {
+  html[data-shell="sidebar"] body > div:not(.print-doc) {
+    padding-left: var(--app-sidebar-w);
+  }
+  html[data-shell="sidebar-collapsed"] body > div:not(.print-doc) {
+    padding-left: var(--app-sidebar-w-collapsed);
+  }
+}
+
+/* Light mode: soften the heavy dark-mode shadows */
+html[data-mode="light"] .shadow-xl,
+html[data-mode="light"] .shadow-2xl {
+  --tw-shadow-color: rgb(15 23 42 / 0.08);
+}
+
+::selection {
+  background-color: var(--color-emerald-500);
+  color: var(--app-on-primary);
+}
+
+/* Printing: always black on white, never theme colours */
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  html[data-shell] body > div {
+    padding-left: 0 !important;
+  }
+  .no-print,
+  .app-shell-nav {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

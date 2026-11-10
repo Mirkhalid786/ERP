@@ -1,0 +1,126 @@
+# =============================================================================
+# Pharmacy ERP — PRODUCTION compose file (standalone; use instead of docker-compose.yml)
+#
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+#
+# Differences from the development file:
+#   * Application code is baked into the images (no source-folder mounts, no dev server).
+#   * The frontend is a compiled Next.js build served by `next start`.
+#   * MySQL is reachable only inside the Docker network (no host port).
+#   * Backend and worker share the backups volume (scheduled backups are downloadable).
+#   * The web UI is published on LAN_BIND (default 0.0.0.0:3000) for the shop's computers;
+#     the API is not published — the UI proxies /api to it.
+# Set APP_ENV=production in .env. Read docs/DEPLOYMENT.md before switching a live system.
+# =============================================================================
+x-logging: &default-logging
+  # Rotate container logs so they cannot fill the disk (5 files x 10 MB per service)
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: pharmacy_db
+    restart: always
+    logging: *default-logging
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - pharmacy_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    command: >
+      --mysql-native-password=ON
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=256M
+      --max-connections=100
+      --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pharmacy_backend
+    # API only; no migration on start (the image built before this change still had "alembic upgrade head && ...")
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+    restart: always
+    logging: *default-logging
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+    volumes:
+      - backend_backups:/app/backups
+    networks:
+      - pharmacy_net
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/live')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pharmacy_worker
+    restart: always
+    logging: *default-logging
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+    volumes:
+      - backend_backups:/app/backups
+    command: ["python", "-m", "app.worker"]
+    networks:
+      - pharmacy_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        INTERNAL_API_URL: http://backend:8000
+    container_name: pharmacy_frontend
+    restart: always
+    logging: *default-logging
+    environment:
+      INTERNAL_API_URL: http://backend:8000
+    ports:
+      - "${LAN_BIND:-0.0.0.0:3000}:3000"
+    networks:
+      - pharmacy_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+    driver: local
+  backend_backups:
+    driver: local
+
+networks:
+  pharmacy_net:
+    driver: bridge

@@ -1,0 +1,319 @@
+name,generic_name,strength,dosage_form,category,hsn_code,requires_prescription,base_unit
+Paracetamol 500 mg Tablet,Paracetamol,500 mg,Tablet,Analgesics & Antipyretics,3004,false,Tablet
+Paracetamol 650 mg Tablet,Paracetamol,650 mg,Tablet,Analgesics & Antipyretics,3004,false,Tablet
+Ibuprofen 200 mg Tablet,Ibuprofen,200 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Ibuprofen 400 mg Tablet,Ibuprofen,400 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Ibuprofen + Paracetamol 400 mg + 325 mg Tablet,Ibuprofen + Paracetamol,400 mg + 325 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Diclofenac Sodium 50 mg Tablet,Diclofenac Sodium,50 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Aceclofenac 100 mg Tablet,Aceclofenac,100 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Aceclofenac + Paracetamol 100 mg + 325 mg Tablet,Aceclofenac + Paracetamol,100 mg + 325 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Mefenamic Acid 250 mg Tablet,Mefenamic Acid,250 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Mefenamic Acid 500 mg Tablet,Mefenamic Acid,500 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Naproxen 250 mg Tablet,Naproxen,250 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Naproxen 500 mg Tablet,Naproxen,500 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Tramadol Hydrochloride 50 mg Tablet,Tramadol Hydrochloride,50 mg,Tablet,Analgesics & Antipyretics,3004,true,Tablet
+Aspirin 75 mg Tablet,Aspirin,75 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Aspirin 150 mg Tablet,Aspirin,150 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Amoxicillin + Clavulanic Acid 625 mg Tablet,Amoxicillin + Clavulanic Acid,625 mg,Tablet,Antibiotics,3004,true,Tablet
+Azithromycin 250 mg Tablet,Azithromycin,250 mg,Tablet,Antibiotics,3004,true,Tablet
+Azithromycin 500 mg Tablet,Azithromycin,500 mg,Tablet,Antibiotics,3004,true,Tablet
+Ciprofloxacin 250 mg Tablet,Ciprofloxacin,250 mg,Tablet,Antibiotics,3004,true,Tablet
+Ciprofloxacin 500 mg Tablet,Ciprofloxacin,500 mg,Tablet,Antibiotics,3004,true,Tablet
+Ofloxacin 200 mg Tablet,Ofloxacin,200 mg,Tablet,Antibiotics,3004,true,Tablet
+Ofloxacin 400 mg Tablet,Ofloxacin,400 mg,Tablet,Antibiotics,3004,true,Tablet
+Levofloxacin 250 mg Tablet,Levofloxacin,250 mg,Tablet,Antibiotics,3004,true,Tablet
+Levofloxacin 500 mg Tablet,Levofloxacin,500 mg,Tablet,Antibiotics,3004,true,Tablet
+Cefixime 200 mg Tablet,Cefixime,200 mg,Tablet,Antibiotics,3004,true,Tablet
+Cefuroxime Axetil 250 mg Tablet,Cefuroxime Axetil,250 mg,Tablet,Antibiotics,3004,true,Tablet
+Cefuroxime Axetil 500 mg Tablet,Cefuroxime Axetil,500 mg,Tablet,Antibiotics,3004,true,Tablet
+Cefpodoxime Proxetil 200 mg Tablet,Cefpodoxime Proxetil,200 mg,Tablet,Antibiotics,3004,true,Tablet
+Metronidazole 200 mg Tablet,Metronidazole,200 mg,Tablet,Antibiotics,3004,true,Tablet
+Metronidazole 400 mg Tablet,Metronidazole,400 mg,Tablet,Antibiotics,3004,true,Tablet
+Tinidazole 500 mg Tablet,Tinidazole,500 mg,Tablet,Antibiotics,3004,true,Tablet
+Nitrofurantoin 100 mg Tablet,Nitrofurantoin,100 mg,Tablet,Antibiotics,3004,true,Tablet
+Cotrimoxazole (Sulfamethoxazole + Trimethoprim) 400 mg + 80 mg Tablet,Cotrimoxazole (Sulfamethoxazole + Trimethoprim),400 mg + 80 mg,Tablet,Antibiotics,3004,true,Tablet
+Cotrimoxazole (Sulfamethoxazole + Trimethoprim) 800 mg + 160 mg Tablet,Cotrimoxazole (Sulfamethoxazole + Trimethoprim),800 mg + 160 mg,Tablet,Antibiotics,3004,true,Tablet
+Doxycycline 100 mg Tablet,Doxycycline,100 mg,Tablet,Antibiotics,3004,true,Tablet
+Fluconazole 150 mg Tablet,Fluconazole,150 mg,Tablet,Antibiotics,3004,true,Tablet
+Albendazole 400 mg Tablet,Albendazole,400 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Ivermectin 6 mg Tablet,Ivermectin,6 mg,Tablet,Antibiotics,3004,true,Tablet
+Ivermectin 12 mg Tablet,Ivermectin,12 mg,Tablet,Antibiotics,3004,true,Tablet
+Acyclovir 400 mg Tablet,Acyclovir,400 mg,Tablet,Antibiotics,3004,true,Tablet
+Acyclovir 800 mg Tablet,Acyclovir,800 mg,Tablet,Antibiotics,3004,true,Tablet
+Hydroxychloroquine Sulphate 200 mg Tablet,Hydroxychloroquine Sulphate,200 mg,Tablet,Antibiotics,3004,true,Tablet
+Cetirizine Hydrochloride 10 mg Tablet,Cetirizine Hydrochloride,10 mg,Tablet,Respiratory & Antiallergic,3004,false,Tablet
+Levocetirizine Dihydrochloride 5 mg Tablet,Levocetirizine Dihydrochloride,5 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Fexofenadine Hydrochloride 120 mg Tablet,Fexofenadine Hydrochloride,120 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Fexofenadine Hydrochloride 180 mg Tablet,Fexofenadine Hydrochloride,180 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Loratadine 10 mg Tablet,Loratadine,10 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Chlorpheniramine Maleate 4 mg Tablet,Chlorpheniramine Maleate,4 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Montelukast 10 mg Tablet,Montelukast,10 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Montelukast + Levocetirizine 10 mg + 5 mg Tablet,Montelukast + Levocetirizine,10 mg + 5 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Salbutamol 2 mg Tablet,Salbutamol,2 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Salbutamol 4 mg Tablet,Salbutamol,4 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Prednisolone 5 mg Tablet,Prednisolone,5 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Prednisolone 10 mg Tablet,Prednisolone,10 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Dexamethasone 0.5 mg Tablet,Dexamethasone,0.5 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Methylprednisolone 4 mg Tablet,Methylprednisolone,4 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Methylprednisolone 8 mg Tablet,Methylprednisolone,8 mg,Tablet,Respiratory & Antiallergic,3004,true,Tablet
+Pantoprazole 40 mg Tablet,Pantoprazole,40 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Rabeprazole Sodium 20 mg Tablet,Rabeprazole Sodium,20 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Famotidine 20 mg Tablet,Famotidine,20 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Famotidine 40 mg Tablet,Famotidine,40 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Domperidone 10 mg Tablet,Domperidone,10 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Ondansetron 4 mg Tablet,Ondansetron,4 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Ondansetron 8 mg Tablet,Ondansetron,8 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Metoclopramide 10 mg Tablet,Metoclopramide,10 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Loperamide Hydrochloride 2 mg Tablet,Loperamide Hydrochloride,2 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Dicyclomine Hydrochloride 10 mg Tablet,Dicyclomine Hydrochloride,10 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Dicyclomine Hydrochloride 20 mg Tablet,Dicyclomine Hydrochloride,20 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Drotaverine Hydrochloride 40 mg Tablet,Drotaverine Hydrochloride,40 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Drotaverine Hydrochloride 80 mg Tablet,Drotaverine Hydrochloride,80 mg,Tablet,Gastrointestinal & Antacids,3004,true,Tablet
+Bisacodyl 5 mg Tablet,Bisacodyl,5 mg,Tablet,Gastrointestinal & Antacids,3004,false,Tablet
+Metformin Hydrochloride 500 mg Tablet,Metformin Hydrochloride,500 mg,Tablet,Antidiabetic,3004,true,Tablet
+Metformin Hydrochloride 850 mg Tablet,Metformin Hydrochloride,850 mg,Tablet,Antidiabetic,3004,true,Tablet
+Metformin Hydrochloride 1000 mg Tablet,Metformin Hydrochloride,1000 mg,Tablet,Antidiabetic,3004,true,Tablet
+Metformin Hydrochloride SR 500 mg Tablet,Metformin Hydrochloride SR,500 mg,Tablet,Antidiabetic,3004,true,Tablet
+Metformin Hydrochloride SR 1000 mg Tablet,Metformin Hydrochloride SR,1000 mg,Tablet,Antidiabetic,3004,true,Tablet
+Glimepiride 1 mg Tablet,Glimepiride,1 mg,Tablet,Antidiabetic,3004,true,Tablet
+Glimepiride 2 mg Tablet,Glimepiride,2 mg,Tablet,Antidiabetic,3004,true,Tablet
+Gliclazide 40 mg Tablet,Gliclazide,40 mg,Tablet,Antidiabetic,3004,true,Tablet
+Gliclazide 80 mg Tablet,Gliclazide,80 mg,Tablet,Antidiabetic,3004,true,Tablet
+Glimepiride + Metformin 1 mg + 500 mg Tablet,Glimepiride + Metformin,1 mg + 500 mg,Tablet,Antidiabetic,3004,true,Tablet
+Glimepiride + Metformin 2 mg + 500 mg Tablet,Glimepiride + Metformin,2 mg + 500 mg,Tablet,Antidiabetic,3004,true,Tablet
+Sitagliptin 50 mg Tablet,Sitagliptin,50 mg,Tablet,Antidiabetic,3004,true,Tablet
+Sitagliptin 100 mg Tablet,Sitagliptin,100 mg,Tablet,Antidiabetic,3004,true,Tablet
+Vildagliptin 50 mg Tablet,Vildagliptin,50 mg,Tablet,Antidiabetic,3004,true,Tablet
+Teneligliptin 20 mg Tablet,Teneligliptin,20 mg,Tablet,Antidiabetic,3004,true,Tablet
+Dapagliflozin 5 mg Tablet,Dapagliflozin,5 mg,Tablet,Antidiabetic,3004,true,Tablet
+Dapagliflozin 10 mg Tablet,Dapagliflozin,10 mg,Tablet,Antidiabetic,3004,true,Tablet
+Empagliflozin 10 mg Tablet,Empagliflozin,10 mg,Tablet,Antidiabetic,3004,true,Tablet
+Empagliflozin 25 mg Tablet,Empagliflozin,25 mg,Tablet,Antidiabetic,3004,true,Tablet
+Pioglitazone 15 mg Tablet,Pioglitazone,15 mg,Tablet,Antidiabetic,3004,true,Tablet
+Pioglitazone 30 mg Tablet,Pioglitazone,30 mg,Tablet,Antidiabetic,3004,true,Tablet
+Voglibose 0.2 mg Tablet,Voglibose,0.2 mg,Tablet,Antidiabetic,3004,true,Tablet
+Voglibose 0.3 mg Tablet,Voglibose,0.3 mg,Tablet,Antidiabetic,3004,true,Tablet
+Amlodipine 2.5 mg Tablet,Amlodipine,2.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Amlodipine 5 mg Tablet,Amlodipine,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Amlodipine 10 mg Tablet,Amlodipine,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Telmisartan 20 mg Tablet,Telmisartan,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Telmisartan 40 mg Tablet,Telmisartan,40 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Telmisartan 80 mg Tablet,Telmisartan,80 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Telmisartan + Amlodipine 40 mg + 5 mg Tablet,Telmisartan + Amlodipine,40 mg + 5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Telmisartan + Hydrochlorothiazide 40 mg + 12.5 mg Tablet,Telmisartan + Hydrochlorothiazide,40 mg + 12.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Losartan Potassium 25 mg Tablet,Losartan Potassium,25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Losartan Potassium 50 mg Tablet,Losartan Potassium,50 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Olmesartan Medoxomil 20 mg Tablet,Olmesartan Medoxomil,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Olmesartan Medoxomil 40 mg Tablet,Olmesartan Medoxomil,40 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Ramipril 2.5 mg Tablet,Ramipril,2.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Ramipril 5 mg Tablet,Ramipril,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Enalapril Maleate 5 mg Tablet,Enalapril Maleate,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Enalapril Maleate 10 mg Tablet,Enalapril Maleate,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Atenolol 25 mg Tablet,Atenolol,25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Atenolol 50 mg Tablet,Atenolol,50 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Metoprolol Succinate ER 25 mg Tablet,Metoprolol Succinate ER,25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Metoprolol Succinate ER 50 mg Tablet,Metoprolol Succinate ER,50 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Bisoprolol Fumarate 2.5 mg Tablet,Bisoprolol Fumarate,2.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Bisoprolol Fumarate 5 mg Tablet,Bisoprolol Fumarate,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Carvedilol 3.125 mg Tablet,Carvedilol,3.125 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Carvedilol 6.25 mg Tablet,Carvedilol,6.25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Carvedilol 12.5 mg Tablet,Carvedilol,12.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Cilnidipine 10 mg Tablet,Cilnidipine,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Hydrochlorothiazide 12.5 mg Tablet,Hydrochlorothiazide,12.5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Hydrochlorothiazide 25 mg Tablet,Hydrochlorothiazide,25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Furosemide 40 mg Tablet,Furosemide,40 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Torsemide 10 mg Tablet,Torsemide,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Torsemide 20 mg Tablet,Torsemide,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Spironolactone 25 mg Tablet,Spironolactone,25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Spironolactone 50 mg Tablet,Spironolactone,50 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Atorvastatin 10 mg Tablet,Atorvastatin,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Atorvastatin 20 mg Tablet,Atorvastatin,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Atorvastatin 40 mg Tablet,Atorvastatin,40 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Rosuvastatin 5 mg Tablet,Rosuvastatin,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Rosuvastatin 10 mg Tablet,Rosuvastatin,10 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Rosuvastatin 20 mg Tablet,Rosuvastatin,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Clopidogrel 75 mg Tablet,Clopidogrel,75 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Clopidogrel + Aspirin 75 mg + 75 mg Tablet,Clopidogrel + Aspirin,75 mg + 75 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Isosorbide Mononitrate 20 mg Tablet,Isosorbide Mononitrate,20 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Isosorbide Mononitrate 30 mg Tablet,Isosorbide Mononitrate,30 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Digoxin 0.25 mg Tablet,Digoxin,0.25 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Warfarin Sodium 1 mg Tablet,Warfarin Sodium,1 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Warfarin Sodium 2 mg Tablet,Warfarin Sodium,2 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Warfarin Sodium 5 mg Tablet,Warfarin Sodium,5 mg,Tablet,Cardiovascular & Antihypertensive,3004,true,Tablet
+Levothyroxine Sodium 25 mcg Tablet,Levothyroxine Sodium,25 mcg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Levothyroxine Sodium 50 mcg Tablet,Levothyroxine Sodium,50 mcg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Levothyroxine Sodium 75 mcg Tablet,Levothyroxine Sodium,75 mcg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Levothyroxine Sodium 100 mcg Tablet,Levothyroxine Sodium,100 mcg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Carbimazole 5 mg Tablet,Carbimazole,5 mg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Carbimazole 10 mg Tablet,Carbimazole,10 mg,Tablet,Endocrine & Thyroid,3004,true,Tablet
+Folic Acid 5 mg Tablet,Folic Acid,5 mg,Tablet,Vitamins & Supplements,3004,false,Tablet
+Ferrous Sulphate + Folic Acid Tablet,Ferrous Sulphate + Folic Acid,,Tablet,Vitamins & Supplements,3004,false,Tablet
+Calcium Carbonate + Vitamin D3 500 mg + 250 IU Tablet,Calcium Carbonate + Vitamin D3,500 mg + 250 IU,Tablet,Vitamins & Supplements,3004,false,Tablet
+Vitamin B Complex Tablet,Vitamin B Complex,,Tablet,Vitamins & Supplements,3004,false,Tablet
+Methylcobalamin 500 mcg Tablet,Methylcobalamin,500 mcg,Tablet,Vitamins & Supplements,3004,false,Tablet
+Methylcobalamin 1500 mcg Tablet,Methylcobalamin,1500 mcg,Tablet,Vitamins & Supplements,3004,false,Tablet
+Ascorbic Acid (Vitamin C) 500 mg Tablet,Ascorbic Acid (Vitamin C),500 mg,Tablet,Vitamins & Supplements,3004,false,Tablet
+Zinc Sulphate (Dispersible) 20 mg Tablet,Zinc Sulphate (Dispersible),20 mg,Tablet,Vitamins & Supplements,3004,false,Tablet
+Alprazolam 0.25 mg Tablet,Alprazolam,0.25 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Alprazolam 0.5 mg Tablet,Alprazolam,0.5 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Clonazepam 0.5 mg Tablet,Clonazepam,0.5 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Escitalopram 10 mg Tablet,Escitalopram,10 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Sertraline 50 mg Tablet,Sertraline,50 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Amitriptyline 10 mg Tablet,Amitriptyline,10 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Amitriptyline 25 mg Tablet,Amitriptyline,25 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Gabapentin 100 mg Tablet,Gabapentin,100 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Gabapentin 300 mg Tablet,Gabapentin,300 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Pregabalin 75 mg Capsule,Pregabalin,75 mg,Capsule,Neurology & Psychiatry,3004,true,Capsule
+Levetiracetam 250 mg Tablet,Levetiracetam,250 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Levetiracetam 500 mg Tablet,Levetiracetam,500 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Sodium Valproate 200 mg Tablet,Sodium Valproate,200 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Sodium Valproate 500 mg Tablet,Sodium Valproate,500 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Phenytoin Sodium 100 mg Tablet,Phenytoin Sodium,100 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Carbamazepine 200 mg Tablet,Carbamazepine,200 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Betahistine 8 mg Tablet,Betahistine,8 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Betahistine 16 mg Tablet,Betahistine,16 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Cinnarizine 25 mg Tablet,Cinnarizine,25 mg,Tablet,Neurology & Psychiatry,3004,true,Tablet
+Tamsulosin 0.4 mg Capsule,Tamsulosin,0.4 mg,Capsule,Urology,3004,true,Capsule
+Finasteride 5 mg Tablet,Finasteride,5 mg,Tablet,Urology,3004,true,Tablet
+Sildenafil 50 mg Tablet,Sildenafil,50 mg,Tablet,Urology,3004,true,Tablet
+Tranexamic Acid 500 mg Tablet,Tranexamic Acid,500 mg,Tablet,Women's Health,3004,true,Tablet
+Norethisterone 5 mg Tablet,Norethisterone,5 mg,Tablet,Women's Health,3004,true,Tablet
+Allopurinol 100 mg Tablet,Allopurinol,100 mg,Tablet,Musculoskeletal & Gout,3004,true,Tablet
+Allopurinol 300 mg Tablet,Allopurinol,300 mg,Tablet,Musculoskeletal & Gout,3004,true,Tablet
+Febuxostat 40 mg Tablet,Febuxostat,40 mg,Tablet,Musculoskeletal & Gout,3004,true,Tablet
+Febuxostat 80 mg Tablet,Febuxostat,80 mg,Tablet,Musculoskeletal & Gout,3004,true,Tablet
+Colchicine 0.5 mg Tablet,Colchicine,0.5 mg,Tablet,Musculoskeletal & Gout,3004,true,Tablet
+Amoxicillin 250 mg Capsule,Amoxicillin,250 mg,Capsule,Antibiotics,3004,true,Capsule
+Amoxicillin 500 mg Capsule,Amoxicillin,500 mg,Capsule,Antibiotics,3004,true,Capsule
+Cephalexin 250 mg Capsule,Cephalexin,250 mg,Capsule,Antibiotics,3004,true,Capsule
+Cephalexin 500 mg Capsule,Cephalexin,500 mg,Capsule,Antibiotics,3004,true,Capsule
+Doxycycline 100 mg Capsule,Doxycycline,100 mg,Capsule,Antibiotics,3004,true,Capsule
+Omeprazole 20 mg Capsule,Omeprazole,20 mg,Capsule,Gastrointestinal & Antacids,3004,true,Capsule
+Esomeprazole 40 mg Capsule,Esomeprazole,40 mg,Capsule,Gastrointestinal & Antacids,3004,true,Capsule
+Pantoprazole + Domperidone SR 40 mg + 30 mg Capsule,Pantoprazole + Domperidone SR,40 mg + 30 mg,Capsule,Gastrointestinal & Antacids,3004,true,Capsule
+Rabeprazole + Domperidone SR 20 mg + 30 mg Capsule,Rabeprazole + Domperidone SR,20 mg + 30 mg,Capsule,Gastrointestinal & Antacids,3004,true,Capsule
+Itraconazole 100 mg Capsule,Itraconazole,100 mg,Capsule,Antibiotics,3004,true,Capsule
+Itraconazole 200 mg Capsule,Itraconazole,200 mg,Capsule,Antibiotics,3004,true,Capsule
+Vitamin D3 (Cholecalciferol) 60000 IU Capsule,Vitamin D3 (Cholecalciferol),60000 IU,Capsule,Vitamins & Supplements,3004,false,Capsule
+Vitamin E 400 mg Capsule,Vitamin E,400 mg,Capsule,Vitamins & Supplements,3004,false,Capsule
+Omega-3 Fatty Acids 1000 mg Capsule,Omega-3 Fatty Acids,1000 mg,Capsule,Vitamins & Supplements,3004,false,Capsule
+Lactic Acid Bacillus (Probiotic) Capsule,Lactic Acid Bacillus (Probiotic),,Capsule,Gastrointestinal & Antacids,3004,false,Capsule
+Paracetamol 125 mg/5 ml Syrup,Paracetamol,125 mg/5 ml,Syrup,Analgesics & Antipyretics,3004,false,Bottle
+Paracetamol 250 mg/5 ml Syrup,Paracetamol,250 mg/5 ml,Syrup,Analgesics & Antipyretics,3004,false,Bottle
+Paracetamol 100 mg/ml Oral Drops,Paracetamol,100 mg/ml,Oral Drops,Analgesics & Antipyretics,3004,false,Bottle
+Ibuprofen 100 mg/5 ml Suspension,Ibuprofen,100 mg/5 ml,Suspension,Analgesics & Antipyretics,3004,true,Bottle
+Amoxicillin 125 mg/5 ml Dry Syrup,Amoxicillin,125 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Amoxicillin 250 mg/5 ml Dry Syrup,Amoxicillin,250 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Amoxicillin + Clavulanic Acid 228.5 mg/5 ml Dry Syrup,Amoxicillin + Clavulanic Acid,228.5 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Amoxicillin + Clavulanic Acid 457 mg/5 ml Dry Syrup,Amoxicillin + Clavulanic Acid,457 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Azithromycin 100 mg/5 ml Suspension,Azithromycin,100 mg/5 ml,Suspension,Antibiotics,3004,true,Bottle
+Azithromycin 200 mg/5 ml Suspension,Azithromycin,200 mg/5 ml,Suspension,Antibiotics,3004,true,Bottle
+Cefixime 50 mg/5 ml Dry Syrup,Cefixime,50 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Cefixime 100 mg/5 ml Dry Syrup,Cefixime,100 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Cefpodoxime Proxetil 50 mg/5 ml Dry Syrup,Cefpodoxime Proxetil,50 mg/5 ml,Dry Syrup,Antibiotics,3004,true,Bottle
+Metronidazole 200 mg/5 ml Suspension,Metronidazole,200 mg/5 ml,Suspension,Antibiotics,3004,true,Bottle
+Albendazole 200 mg/5 ml Suspension,Albendazole,200 mg/5 ml,Suspension,Gastrointestinal & Antacids,3004,true,Bottle
+Cetirizine Hydrochloride 5 mg/5 ml Syrup,Cetirizine Hydrochloride,5 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,false,Bottle
+Levocetirizine Dihydrochloride 2.5 mg/5 ml Syrup,Levocetirizine Dihydrochloride,2.5 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Montelukast + Levocetirizine 4 mg + 2.5 mg/5 ml Syrup,Montelukast + Levocetirizine,4 mg + 2.5 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Salbutamol 2 mg/5 ml Syrup,Salbutamol,2 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Ambroxol Hydrochloride 15 mg/5 ml Syrup,Ambroxol Hydrochloride,15 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Ambroxol Hydrochloride 30 mg/5 ml Syrup,Ambroxol Hydrochloride,30 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Dextromethorphan Hydrobromide + Chlorpheniramine 10 mg + 2 mg/5 ml Syrup,Dextromethorphan Hydrobromide + Chlorpheniramine,10 mg + 2 mg/5 ml,Syrup,Respiratory & Antiallergic,3004,true,Bottle
+Ondansetron 2 mg/5 ml Syrup,Ondansetron,2 mg/5 ml,Syrup,Gastrointestinal & Antacids,3004,true,Bottle
+Domperidone 1 mg/ml Suspension,Domperidone,1 mg/ml,Suspension,Gastrointestinal & Antacids,3004,true,Bottle
+Lactulose 10 g/15 ml Solution,Lactulose,10 g/15 ml,Solution,Gastrointestinal & Antacids,3004,false,Bottle
+Aluminium Hydroxide + Magnesium Hydroxide + Simethicone Suspension,Aluminium Hydroxide + Magnesium Hydroxide + Simethicone,,Suspension,Gastrointestinal & Antacids,3004,false,Bottle
+Sucralfate 1 g/10 ml Suspension,Sucralfate,1 g/10 ml,Suspension,Gastrointestinal & Antacids,3004,true,Bottle
+Ferric Ammonium Citrate + Folic Acid Syrup,Ferric Ammonium Citrate + Folic Acid,,Syrup,Vitamins & Supplements,3004,false,Bottle
+Multivitamin Syrup,Multivitamin,,Syrup,Vitamins & Supplements,3004,false,Bottle
+Calcium + Vitamin D3 Suspension,Calcium + Vitamin D3,,Suspension,Vitamins & Supplements,3004,false,Bottle
+Vitamin D3 (Cholecalciferol) 400 IU/ml Oral Drops,Vitamin D3 (Cholecalciferol),400 IU/ml,Oral Drops,Vitamins & Supplements,3004,false,Bottle
+Zinc Sulphate 20 mg/5 ml Syrup,Zinc Sulphate,20 mg/5 ml,Syrup,Vitamins & Supplements,3004,false,Bottle
+Sodium Valproate 200 mg/5 ml Syrup,Sodium Valproate,200 mg/5 ml,Syrup,Neurology & Psychiatry,3004,true,Bottle
+Ceftriaxone 250 mg Injection (Vial),Ceftriaxone,250 mg,Injection (Vial),Antibiotics,3004,true,Vial
+Ceftriaxone 500 mg Injection (Vial),Ceftriaxone,500 mg,Injection (Vial),Antibiotics,3004,true,Vial
+Ceftriaxone 1 g Injection (Vial),Ceftriaxone,1 g,Injection (Vial),Antibiotics,3004,true,Vial
+Amikacin 100 mg/2 ml Injection (Vial),Amikacin,100 mg/2 ml,Injection (Vial),Antibiotics,3004,true,Vial
+Amikacin 500 mg/2 ml Injection (Vial),Amikacin,500 mg/2 ml,Injection (Vial),Antibiotics,3004,true,Vial
+Gentamicin 80 mg/2 ml Injection (Vial),Gentamicin,80 mg/2 ml,Injection (Vial),Antibiotics,3004,true,Vial
+Pantoprazole 40 mg Injection (Vial),Pantoprazole,40 mg,Injection (Vial),Gastrointestinal & Antacids,3004,true,Vial
+Ondansetron 2 mg/ml Injection (Ampoule),Ondansetron,2 mg/ml,Injection (Ampoule),Gastrointestinal & Antacids,3004,true,Ampoule
+Diclofenac Sodium 75 mg/ml Injection (Ampoule),Diclofenac Sodium,75 mg/ml,Injection (Ampoule),Analgesics & Antipyretics,3004,true,Ampoule
+Paracetamol 150 mg/ml Injection (Ampoule),Paracetamol,150 mg/ml,Injection (Ampoule),Analgesics & Antipyretics,3004,true,Ampoule
+Dexamethasone Sodium Phosphate 4 mg/ml Injection (Vial),Dexamethasone Sodium Phosphate,4 mg/ml,Injection (Vial),Respiratory & Antiallergic,3004,true,Vial
+Pheniramine Maleate 22.75 mg/ml Injection (Ampoule),Pheniramine Maleate,22.75 mg/ml,Injection (Ampoule),Respiratory & Antiallergic,3004,true,Ampoule
+Insulin Human Regular 40 IU/ml Injection (Vial),Insulin Human Regular,40 IU/ml,Injection (Vial),Antidiabetic,3004,true,Vial
+Insulin Human Regular 100 IU/ml Injection (Vial),Insulin Human Regular,100 IU/ml,Injection (Vial),Antidiabetic,3004,true,Vial
+Insulin Human Premix 30/70 40 IU/ml Injection (Vial),Insulin Human Premix 30/70,40 IU/ml,Injection (Vial),Antidiabetic,3004,true,Vial
+Insulin Human Premix 30/70 100 IU/ml Injection (Vial),Insulin Human Premix 30/70,100 IU/ml,Injection (Vial),Antidiabetic,3004,true,Vial
+Methylcobalamin 500 mcg/ml Injection (Ampoule),Methylcobalamin,500 mcg/ml,Injection (Ampoule),Vitamins & Supplements,3004,true,Ampoule
+Vitamin B Complex Injection (Vial),Vitamin B Complex,,Injection (Vial),Vitamins & Supplements,3004,true,Vial
+Tetanus Toxoid (Adsorbed) 0.5 ml Injection (Ampoule),Tetanus Toxoid (Adsorbed),0.5 ml,Injection (Ampoule),Injectables & IV Fluids,3004,true,Ampoule
+Sodium Chloride 0.9% 500 ml Infusion,Sodium Chloride 0.9%,500 ml,Infusion,Injectables & IV Fluids,3004,true,Bottle
+Dextrose 5% 500 ml Infusion,Dextrose 5%,500 ml,Infusion,Injectables & IV Fluids,3004,true,Bottle
+Ringer Lactate 500 ml Infusion,Ringer Lactate,500 ml,Infusion,Injectables & IV Fluids,3004,true,Bottle
+Water for Injection 10 ml Injection (Ampoule),Water for Injection,10 ml,Injection (Ampoule),Injectables & IV Fluids,3004,true,Ampoule
+Ciprofloxacin 0.3% w/v Eye/Ear Drops,Ciprofloxacin,0.3% w/v,Eye/Ear Drops,Antibiotics,3004,true,Bottle
+Moxifloxacin 0.5% w/v Eye Drops,Moxifloxacin,0.5% w/v,Eye Drops,Antibiotics,3004,true,Bottle
+Tobramycin 0.3% w/v Eye Drops,Tobramycin,0.3% w/v,Eye Drops,Antibiotics,3004,true,Bottle
+Carboxymethylcellulose Sodium 0.5% w/v Eye Drops,Carboxymethylcellulose Sodium,0.5% w/v,Eye Drops,Ophthalmic,3004,false,Bottle
+Olopatadine 0.1% w/v Eye Drops,Olopatadine,0.1% w/v,Eye Drops,Respiratory & Antiallergic,3004,true,Bottle
+Timolol Maleate 0.5% w/v Eye Drops,Timolol Maleate,0.5% w/v,Eye Drops,Ophthalmic,3004,true,Bottle
+Xylometazoline Hydrochloride 0.05% w/v Nasal Drops,Xylometazoline Hydrochloride,0.05% w/v,Nasal Drops,Respiratory & Antiallergic,3004,false,Bottle
+Xylometazoline Hydrochloride 0.1% w/v Nasal Drops,Xylometazoline Hydrochloride,0.1% w/v,Nasal Drops,Respiratory & Antiallergic,3004,false,Bottle
+Sodium Chloride (Saline) 0.65% w/v Nasal Drops,Sodium Chloride (Saline),0.65% w/v,Nasal Drops,Respiratory & Antiallergic,3004,false,Bottle
+Fluticasone Propionate 50 mcg/dose Nasal Spray,Fluticasone Propionate,50 mcg/dose,Nasal Spray,Respiratory & Antiallergic,3004,true,Bottle
+Clotrimazole + Lignocaine 1% + 2% w/v Ear Drops,Clotrimazole + Lignocaine,1% + 2% w/v,Ear Drops,Antibiotics,3004,true,Bottle
+Paradichlorobenzene + Benzocaine (Wax Softener) Ear Drops,Paradichlorobenzene + Benzocaine (Wax Softener),,Ear Drops,Over-The-Counter (OTC),3004,false,Bottle
+Clotrimazole 1% w/w Cream,Clotrimazole,1% w/w,Cream,Dermatological & Topicals,3004,false,Tube
+Ketoconazole 2% w/w Cream,Ketoconazole,2% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Luliconazole 1% w/w Cream,Luliconazole,1% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Terbinafine 1% w/w Cream,Terbinafine,1% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Mupirocin 2% w/w Ointment,Mupirocin,2% w/w,Ointment,Dermatological & Topicals,3004,true,Tube
+Fusidic Acid 2% w/w Cream,Fusidic Acid,2% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Silver Sulfadiazine 1% w/w Cream,Silver Sulfadiazine,1% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Povidone-Iodine 5% w/w Ointment,Povidone-Iodine,5% w/w,Ointment,Dermatological & Topicals,3004,false,Tube
+Betamethasone Valerate 0.1% w/w Cream,Betamethasone Valerate,0.1% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Clobetasol Propionate 0.05% w/w Cream,Clobetasol Propionate,0.05% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Hydrocortisone 1% w/w Cream,Hydrocortisone,1% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Permethrin 5% w/w Cream,Permethrin,5% w/w,Cream,Dermatological & Topicals,3004,true,Tube
+Diclofenac Diethylamine 1.16% w/w Gel,Diclofenac Diethylamine,1.16% w/w,Gel,Analgesics & Antipyretics,3004,false,Tube
+Lignocaine Hydrochloride 2% w/w Gel,Lignocaine Hydrochloride,2% w/w,Gel,Dermatological & Topicals,3004,true,Tube
+Calamine Lotion Lotion,Calamine Lotion,,Lotion,Dermatological & Topicals,3004,false,Bottle
+Adapalene 0.1% w/w Gel,Adapalene,0.1% w/w,Gel,Dermatological & Topicals,3004,true,Tube
+Benzoyl Peroxide 2.5% w/w Gel,Benzoyl Peroxide,2.5% w/w,Gel,Dermatological & Topicals,3004,true,Tube
+Clotrimazole 1% w/w Dusting Powder,Clotrimazole,1% w/w,Dusting Powder,Dermatological & Topicals,3004,false,Bottle
+Salbutamol 100 mcg/dose Inhaler,Salbutamol,100 mcg/dose,Inhaler,Respiratory & Antiallergic,3004,true,Piece
+Budesonide 200 mcg/dose Inhaler,Budesonide,200 mcg/dose,Inhaler,Respiratory & Antiallergic,3004,true,Piece
+Formoterol + Budesonide 6 mcg + 200 mcg/dose Inhaler,Formoterol + Budesonide,6 mcg + 200 mcg/dose,Inhaler,Respiratory & Antiallergic,3004,true,Piece
+Salmeterol + Fluticasone 25 mcg + 250 mcg/dose Inhaler,Salmeterol + Fluticasone,25 mcg + 250 mcg/dose,Inhaler,Respiratory & Antiallergic,3004,true,Piece
+Tiotropium 9 mcg/dose Inhaler,Tiotropium,9 mcg/dose,Inhaler,Respiratory & Antiallergic,3004,true,Piece
+Levosalbutamol 0.63 mg/2.5 ml Respules,Levosalbutamol,0.63 mg/2.5 ml,Respules,Respiratory & Antiallergic,3004,true,Ampoule
+Budesonide 0.5 mg/2 ml Respules,Budesonide,0.5 mg/2 ml,Respules,Respiratory & Antiallergic,3004,true,Ampoule
+Ipratropium + Levosalbutamol 500 mcg + 1.25 mg/2.5 ml Respules,Ipratropium + Levosalbutamol,500 mcg + 1.25 mg/2.5 ml,Respules,Respiratory & Antiallergic,3004,true,Ampoule
+Oral Rehydration Salts (WHO formula) 21.8 g,Oral Rehydration Salts (WHO formula),21.8 g,Sachet,Over-The-Counter (OTC),3004,false,Piece
+Activated Charcoal + Simethicone,Activated Charcoal + Simethicone,,Tablet,Gastrointestinal & Antacids,3004,false,Tablet
+Isabgol (Psyllium Husk),Isabgol (Psyllium Husk),,Powder,Gastrointestinal & Antacids,3004,false,Piece
+Absorbent Cotton Wool IP 100 g,Absorbent Cotton Wool IP,100 g,Roll,Surgicals & Consumables,3005,false,Piece
+Roller Bandage 10 cm x 4 m,Roller Bandage,10 cm x 4 m,Piece,Surgicals & Consumables,3005,false,Piece
+Crepe Bandage 10 cm,Crepe Bandage,10 cm,Piece,Surgicals & Consumables,3005,false,Piece
+Adhesive Plaster (Surgical Tape) 2.5 cm,Adhesive Plaster (Surgical Tape),2.5 cm,Roll,Surgicals & Consumables,3005,false,Piece
+Sterile Gauze Swabs 10 cm x 10 cm,Sterile Gauze Swabs,10 cm x 10 cm,Pack,Surgicals & Consumables,3005,false,Piece
+Adhesive Wound Dressing Strips,Adhesive Wound Dressing Strips,,Pack,Surgicals & Consumables,3005,false,Piece
+Disposable Syringe with Needle 2 ml,Disposable Syringe with Needle,2 ml,Piece,Surgicals & Consumables,9018,false,Piece
+Disposable Syringe with Needle 5 ml,Disposable Syringe with Needle,5 ml,Piece,Surgicals & Consumables,9018,false,Piece
+Disposable Syringe with Needle 10 ml,Disposable Syringe with Needle,10 ml,Piece,Surgicals & Consumables,9018,false,Piece
+Insulin Syringe 1 ml (40 IU),Insulin Syringe,1 ml (40 IU),Piece,Surgicals & Consumables,9018,false,Piece
+Insulin Syringe 1 ml (100 IU),Insulin Syringe,1 ml (100 IU),Piece,Surgicals & Consumables,9018,false,Piece
+IV Cannula 20 G,IV Cannula,20 G,Piece,Surgicals & Consumables,9018,false,Piece
+IV Cannula 22 G,IV Cannula,22 G,Piece,Surgicals & Consumables,9018,false,Piece
+IV Cannula 24 G,IV Cannula,24 G,Piece,Surgicals & Consumables,9018,false,Piece
+Infusion Set,Infusion Set,,Piece,Surgicals & Consumables,9018,false,Piece
+Examination Gloves (Latex) Medium,Examination Gloves (Latex),Medium,Pair,Surgicals & Consumables,4015,false,Piece
+Examination Gloves (Latex) Large,Examination Gloves (Latex),Large,Pair,Surgicals & Consumables,4015,false,Piece
+Surgical Face Mask (3-ply),Surgical Face Mask (3-ply),,Piece,Surgicals & Consumables,6307,false,Piece
+Clinical Thermometer (Digital),Clinical Thermometer (Digital),,Piece,Surgicals & Consumables,9025,false,Piece
+Hand Sanitizer (Alcohol-based) 100 ml,Hand Sanitizer (Alcohol-based),100 ml,Bottle,Over-The-Counter (OTC),3808,false,Bottle
+Hand Sanitizer (Alcohol-based) 500 ml,Hand Sanitizer (Alcohol-based),500 ml,Bottle,Over-The-Counter (OTC),3808,false,Bottle
+Antiseptic Liquid (Chloroxylenol) 100 ml,Antiseptic Liquid (Chloroxylenol),100 ml,Bottle,Over-The-Counter (OTC),3808,false,Bottle

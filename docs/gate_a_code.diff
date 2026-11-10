@@ -1,0 +1,245 @@
+--- a/backend/alembic/env.py
++++ b/backend/alembic/env.py
+@@ -32,6 +32,53 @@
+ 
+ target_metadata = Base.metadata
+ 
++# ── Migration guard ────────────────────────────────────────────────────────────
++# Commands that change the database (upgrade, downgrade, stamp, ensure_version) run
++# only when ALLOW_DB_MIGRATIONS=1 is set explicitly for that command. The one exception
++# is an `upgrade` when the database is already at the code head: it has nothing to apply.
++# The command is identified from the callback Alembic passes to this environment, so the
++# guard applies equally to the CLI, the programmatic API (alembic.command.*) and the
++# container start command. Unknown commands are treated as changing commands (fail
++# closed). Offline mode (--sql) only prints SQL and never connects, so it is not guarded.
++ALLOW_ENV = "ALLOW_DB_MIGRATIONS"
++READ_ONLY_COMMANDS = {
++    "display_version",           # alembic current
++    "show_current",              # alembic show current
++    "_display_current_history",  # alembic history -i
++    "edit_current",              # alembic edit current
++    "retrieve_migrations",       # alembic check / revision --autogenerate (compare only)
++    "nothing",                   # alembic revision (writes a file, not the database)
++}
++GUARD_EXIT_CODE = 3
++
++
++def _running_command() -> str:
++    proxy = getattr(context, "_proxy", None)
++    fn = getattr(proxy, "context_opts", {}).get("fn") if proxy is not None else None
++    return getattr(fn, "__name__", "") or "<unknown>"
++
++
++def migration_guard(connection) -> None:
++    command = _running_command()
++    if command in READ_ONLY_COMMANDS:
++        return
++    from alembic.runtime.migration import MigrationContext
++    current = MigrationContext.configure(connection).get_current_revision()   # read-only SELECT
++    # End the implicit transaction that SELECT opened. Otherwise Alembic would treat the
++    # connection's transaction as externally managed and never commit the migration.
++    connection.rollback()
++    head = context.script.get_current_head()
++    if os.environ.get(ALLOW_ENV) == "1":
++        print(f"[migration guard] {ALLOW_ENV}=1: allowing '{command}' (database at {current}, code head {head})",
++              file=sys.stderr)
++        return
++    if command == "upgrade" and current == head:
++        return                     # Already at head: nothing will be applied
++    print(f"[migration guard] REFUSED '{command}': database at {current}, code head {head}. "
++          f"Nothing was changed. Back up the database first, then run this command with {ALLOW_ENV}=1 "
++          "(see docs/RECOVERY_DEPLOYMENT_PLAN.md).", file=sys.stderr)
++    sys.exit(GUARD_EXIT_CODE)
++
+ 
+ def run_migrations_offline() -> None:
+     """
+@@ -63,6 +110,7 @@
+         poolclass=pool.NullPool,
+     )
+     with connectable.connect() as connection:
++        migration_guard(connection)
+         context.configure(
+             connection=connection,
+             target_metadata=target_metadata,
+--- a/backend/app/main.py
++++ b/backend/app/main.py
+@@ -47,6 +47,21 @@
+             await session.execute(text("SELECT 1"))
+     except Exception as exc:
+         raise RuntimeError(f"Database connectivity check failed on startup: {exc}") from exc
++
++    # The migration flag is for one-off operator commands only. If it is set in the server's
++    # environment (e.g. left in .env) the start command would migrate unattended: refuse.
++    import os
++    if os.environ.get("ALLOW_DB_MIGRATIONS"):
++        raise RuntimeError("Refusing to start: ALLOW_DB_MIGRATIONS is set in the server environment. "
++                           "Remove it from .env / compose; pass it only to the one-off migration command")
++
++    # Refuse to serve against a schema this code was not written for (read-only check)
++    from app.core.schema_guard import check_schema
++    state = await check_schema(engine)
++    if not state["ok"]:
++        import logging
++        logging.getLogger("app.startup").critical("Refusing to start: %s", state["reason"])
++        raise RuntimeError(f"Refusing to start: {state['reason']}")
+     
+     yield
+     
+--- a/backend/app/worker.py
++++ b/backend/app/worker.py
+@@ -15,13 +15,15 @@
+ import json
+ import logging
+ import signal
++import sys
+ from datetime import date
+ from typing import Optional
+ 
+ from sqlalchemy import select
+ 
+ from app.core.config import settings
+-from app.core.database import AsyncSessionLocal
++from app.core.database import AsyncSessionLocal, engine
++from app.core.schema_guard import check_schema
+ from app.models.auth import Pharmacy
+ from app.services import admin_ops
+ from app.services.messaging import process_outbox, scan_reminders
+@@ -53,6 +55,17 @@
+     return {"reminder_candidates": created, "messages_attempted": sent}
+ 
+ 
++class _SchemaPaused(Exception):
++    """This pass was skipped because the database schema does not match the code."""
++
++
++async def _schema_state() -> dict:
++    try:
++        return await check_schema(engine)
++    finally:
++        await engine.dispose()
++
++
+ async def run_forever() -> None:
+     stop = asyncio.Event()
+     loop = asyncio.get_running_loop()
+@@ -62,10 +75,21 @@
+         except NotImplementedError:  # Windows
+             pass
+     last_scan = None
++    last_schema_reason = None
+     log.info("Worker started (interval %ss, reminder scan every %s min)",
+              settings.WORKER_INTERVAL_SECONDS, settings.WORKER_REMINDER_SCAN_MINUTES)
+     while not stop.is_set():
+         try:
++            # Do nothing at all (no sends, no heartbeat, no backups) unless the schema matches this code
++            state = await check_schema(engine)
++            if not state["ok"]:
++                if state["reason"] != last_schema_reason:
++                    log.error("Worker paused, waiting for a planned migration: %s", state["reason"])
++                    last_schema_reason = state["reason"]
++                raise _SchemaPaused()
++            if last_schema_reason is not None:
++                log.info("Schema matches revision %s; worker resuming", state["code_head"])
++                last_schema_reason = None
+             now = loop.time()
+             do_scan = last_scan is None or now - last_scan >= settings.WORKER_REMINDER_SCAN_MINUTES * 60
+             result = await run_once(scan=do_scan)
+@@ -81,6 +105,8 @@
+             backup = await admin_ops.maybe_scheduled_backup(AsyncSessionLocal)
+             if backup:
+                 log.info("Scheduled backup: %s", backup)
++        except _SchemaPaused:
++            pass
+         except Exception:  # Keep running; the next pass retries
+             log.exception("Worker pass failed")
+         try:
+@@ -98,6 +124,10 @@
+     args = parser.parse_args()
+     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+     if args.once:
++        state = asyncio.run(_schema_state())
++        if not state["ok"]:
++            print(f"Refusing to run: {state['reason']}", file=sys.stderr)
++            raise SystemExit(3)
+         result = asyncio.run(run_once(dry_run=args.dry_run, on_date=args.date))
+         print(json.dumps(result, default=str, indent=2))
+     else:
+--- /dev/null
++++ b/backend/app/core/schema_guard.py
+@@ -0,0 +1,75 @@
++"""
++Database schema version guard for the application processes (API server and worker).
++
++The application only operates when the database's Alembic revision equals the newest
++migration in the code ("code head"). Otherwise the API refuses to start and the worker
++skips its work, so new code never runs against an old schema (or old code against a
++newer one). Migrations themselves are applied only by an operator — see the guard in
++alembic/env.py and docs/RECOVERY_DEPLOYMENT_PLAN.md.
++
++The check is read-only: it looks for the alembic_version table and SELECTs from it.
++It never creates tables, stamps versions or writes anything.
++
++A database with no alembic_version table at all (e.g. a test or staging schema built
++with create_all) is "unmanaged". It is refused too, unless ALLOW_UNMANAGED_SCHEMA=1 is
++set; that flag has no effect on a database that does have an alembic_version table, so
++it cannot be used to run against a live database on the wrong revision.
++"""
++import logging
++import os
++from functools import lru_cache
++from typing import Optional
++
++from sqlalchemy import inspect, text
++
++log = logging.getLogger(__name__)
++
++UNMANAGED_ENV = "ALLOW_UNMANAGED_SCHEMA"
++BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++
++
++@lru_cache(maxsize=1)
++def code_head() -> str:
++    """The newest migration revision shipped with this code (from the migration files; no DB access)."""
++    from alembic.config import Config
++    from alembic.script import ScriptDirectory
++    cfg = Config(os.path.join(BACKEND_ROOT, "alembic.ini"))
++    cfg.set_main_option("script_location", os.path.join(BACKEND_ROOT, "alembic"))
++    heads = ScriptDirectory.from_config(cfg).get_heads()
++    if len(heads) != 1:
++        raise RuntimeError(f"Expected exactly one migration head in the code, found {heads}")
++    return heads[0]
++
++
++async def database_revision(conn) -> tuple:
++    """(managed, revision). Read-only: an inspector check plus one SELECT."""
++    managed = await conn.run_sync(lambda sync_conn: inspect(sync_conn).has_table("alembic_version"))
++    if not managed:
++        return False, None
++    rows = (await conn.execute(text("SELECT version_num FROM alembic_version"))).scalars().all()
++    if len(rows) != 1:
++        return True, f"<{len(rows)} rows>"
++    return True, rows[0]
++
++
++async def check_schema(engine) -> dict:
++    """Compare the database revision with the code head. Never writes; always rolls back."""
++    head = code_head()
++    async with engine.connect() as conn:
++        try:
++            managed, revision = await database_revision(conn)
++        finally:
++            await conn.rollback()
++    reason: Optional[str] = None
++    if not managed:
++        ok = os.environ.get(UNMANAGED_ENV) == "1"
++        if not ok:
++            reason = (f"the database has no alembic_version table (unmanaged schema); code expects revision {head}. "
++                      f"Initialise it with the controlled migration command, or set {UNMANAGED_ENV}=1 for a "
++                      "test/staging schema built from the models")
++    else:
++        ok = revision == head
++        if not ok:
++            reason = (f"database is at revision {revision} but this code requires {head}. "
++                      "Back up, then apply migrations with the controlled command (ALLOW_DB_MIGRATIONS=1)")
++    return {"ok": ok, "managed": managed, "database_revision": revision, "code_head": head, "reason": reason}
