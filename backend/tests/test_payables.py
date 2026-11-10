@@ -247,6 +247,43 @@ async def test_partial_payments_allocations_and_balances(client: AsyncClient, te
 
 
 @pytest.mark.asyncio
+async def test_auto_allocation_matches_directive_example_oldest_due_first(client: AsyncClient):
+    """
+    Master-directive §7 example, encoded exactly:
+      Invoice A ₹250, Invoice B ₹800, Invoice C ₹1,000 (total ₹2,050).
+      Pay ₹500 with auto-allocation -> ₹250 to A, ₹250 to B, C untouched.
+      Remaining: A ₹0, B ₹550, C ₹1,000 (total ₹1,550) and NO advance,
+      because the payment does not exceed total outstanding.
+    Invoices are created in reverse due-date order (C, B, A) so the test
+    proves allocation follows due date, not creation order.
+    """
+    data = await setup_pharmacy_and_catalogue(client)
+    c = await finalized_bill(client, data, number="DIR-C", qty="10.00", rate="100.00",
+                             due_date=str(TODAY + timedelta(days=30)))   # ₹1,000
+    b = await finalized_bill(client, data, number="DIR-B", qty="10.00", rate="80.00",
+                             due_date=str(TODAY + timedelta(days=20)))   # ₹800
+    a = await finalized_bill(client, data, number="DIR-A", qty="10.00", rate="25.00",
+                             due_date=str(TODAY + timedelta(days=10)))   # ₹250
+
+    p = await pay(client, data, "500.00", auto_allocate=True)
+    assert D(p["allocated"]) == D("500.00")
+    assert D(p["unallocated"]) == D("0.00")  # must NOT be classified as advance
+
+    allocs = {al["invoice_id"]: D(al["amount"]) for al in p["allocations"] if al["status"] == "ACTIVE"}
+    assert allocs == {a["id"]: D("250.00"), b["id"]: D("250.00")}
+
+    inv_a, inv_b, inv_c = (await invoice(client, a["id"])), (await invoice(client, b["id"])), (await invoice(client, c["id"]))
+    assert D(inv_a["outstanding_amount"]) == D("0.00") and inv_a["payment_status"] == "PAID"
+    assert D(inv_b["outstanding_amount"]) == D("550.00") and inv_b["payment_status"] == "PARTIALLY_PAID"
+    assert D(inv_c["outstanding_amount"]) == D("1000.00") and inv_c["payment_status"] == "UNPAID"
+
+    balances = (await client.get("/api/v1/supplier-payments/balances")).json()[0]
+    assert D(balances["balance"]) == D("1550.00")
+    assert D(balances["unallocated_payments"]) == D("0.00")
+    await reconciled(client)
+
+
+@pytest.mark.asyncio
 async def test_duplicate_payment_prevention(client: AsyncClient):
     data = await setup_pharmacy_and_catalogue(client)
     inv = await finalized_bill(client, data)
