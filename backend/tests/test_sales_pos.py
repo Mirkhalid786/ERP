@@ -180,7 +180,7 @@ async def test_expired_quarantined_and_insufficient_stock_are_rejected(client: A
         "idempotency_key": key(), "items": [line(data, "1")], "payments": [{"method": "CASH", "tendered": "50"}]})
     assert expired.status_code == 422
     search = (await client.get("/api/v1/pos/search?q=dolo")).json()
-    assert search[0]["batches"] == []                                    # expired stock is not offered
+    assert search == []                                                  # expired-only stock is not offered at POS at all
     assert await batch_stock(client, data["batch"]["id"]) == D("30.00")
 
 

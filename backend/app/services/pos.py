@@ -109,12 +109,20 @@ def _batch_view(batch: MedicineBatch) -> dict:
 async def search_saleable(db: AsyncSession, pharmacy_id: int, query: str, limit: int = 20) -> List[dict]:
     """
     Find medicines by name, brand, generic/composition, manufacturer or barcode.
+
+    POS search is a *saleable stock* search, not a catalogue search: a medicine
+    is returned only when it is active, not discontinued, and has at least one
+    saleable batch (active, released, unexpired, quantity > 0 — see
+    `saleable_filter`). The EXISTS condition is part of the medicine query
+    itself, so `limit` counts saleable medicines only and pagination stays
+    correct without loading the catalogue or every batch into memory.
     An exact barcode match is returned first (scanners type the code and press Enter).
     """
     term = query.strip()
     if not term:
         return []
     like = f"%{term}%"
+    cutoff = await expiry_cutoff(db, pharmacy_id)
 
     barcode_ids = set((await db.execute(
         select(MedicineBarcode.medicine_id).where(
@@ -125,6 +133,11 @@ async def search_saleable(db: AsyncSession, pharmacy_id: int, query: str, limit:
         select(Medicine.id).where(Medicine.pharmacy_id == pharmacy_id, Medicine.barcode == term)
     )).scalars().all())
 
+    has_saleable_batch = (
+        select(MedicineBatch.id)
+        .where(MedicineBatch.medicine_id == Medicine.id, *saleable_filter(pharmacy_id, cutoff))
+        .exists()
+    )
     stmt = (
         select(Medicine)
         .outerjoin(Manufacturer, Manufacturer.id == Medicine.manufacturer_id)
@@ -137,6 +150,8 @@ async def search_saleable(db: AsyncSession, pharmacy_id: int, query: str, limit:
         .where(
             Medicine.pharmacy_id == pharmacy_id,
             Medicine.is_active.is_(True),
+            Medicine.is_discontinued.is_(False),
+            has_saleable_batch,
             or_(
                 Medicine.id.in_(barcode_ids) if barcode_ids else false(),
                 Medicine.name.ilike(like),
@@ -151,7 +166,6 @@ async def search_saleable(db: AsyncSession, pharmacy_id: int, query: str, limit:
     medicines = list((await db.execute(stmt)).scalars().unique().all())
     medicines.sort(key=lambda m: (m.id not in barcode_ids, m.name.lower()))
 
-    cutoff = await expiry_cutoff(db, pharmacy_id)
     schedules = await rx_schedules(db, pharmacy_id)
     ids = [m.id for m in medicines]
     batches_by_med: Dict[int, List[MedicineBatch]] = {i: [] for i in ids}

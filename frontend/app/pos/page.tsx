@@ -81,6 +81,7 @@ export default function PosPage() {
   const [results, setResults] = useState<PosMedicine[]>([]);
   const [highlight, setHighlight] = useState(0);
   const [searching, setSearching] = useState(false);
+  const [noResults, setNoResults] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -120,14 +121,18 @@ export default function PosPage() {
     const seq = ++searchSeq.current;
     if (q.trim().length < 2) {
       setResults([]);
+      setNoResults(false);
       return [];
     }
     setSearching(true);
     try {
-      const rows = await salesApi.search(q.trim());
+      // POS bills only what can actually be sold: drop anything without a
+      // saleable batch even if a stale response or another source returns it.
+      const rows = (await salesApi.search(q.trim())).filter((m) => m.batches.length > 0 && num(m.total_stock_base) > 0);
       if (seq === searchSeq.current) {
         setResults(rows);
         setHighlight(0);
+        setNoResults(rows.length === 0);
       }
       return rows;
     } catch (e) {
@@ -163,6 +168,7 @@ export default function PosPage() {
     });
     setQuery("");
     setResults([]);
+    setNoResults(false);
     setError(null);
     searchRef.current?.focus();
   }, []);
@@ -181,10 +187,11 @@ export default function PosPage() {
       const barcodeHit = rows.find((r) => r.matched_barcode);
       const pick = barcodeHit || rows[highlight] || rows[0];
       if (pick) addMedicine(pick);
-      else if (query.trim()) setError(`No medicine found for "${query.trim()}"`);
+      else if (query.trim()) setError(`No saleable stock found for "${query.trim()}"`);
     } else if (e.key === "Escape") {
       setQuery("");
       setResults([]);
+      setNoResults(false);
     }
   };
 
@@ -402,9 +409,12 @@ export default function PosPage() {
                 aria-label="Search medicines"
                 autoComplete="off"
               />
-              {(results.length > 0 || searching) && (
+              {(results.length > 0 || searching || noResults) && (
                 <div className="absolute z-20 left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-h-[420px] overflow-y-auto" role="listbox">
                   {searching && results.length === 0 && <div className="p-3 text-sm text-slate-400">Searching…</div>}
+                  {!searching && noResults && results.length === 0 && (
+                    <div className="p-3 text-sm text-slate-400">No saleable stock found</div>
+                  )}
                   {results.map((m, i) => (
                     <button
                       key={m.medicine_id}
@@ -427,13 +437,11 @@ export default function PosPage() {
                           </span>
                         </div>
                       </div>
-                      {m.batches[0] ? (
+                      {m.batches[0] && (
                         <div className="text-[11px] text-slate-500 mt-0.5">
                           FEFO batch {m.batches[0].batch_number} · exp {fmtDate(m.batches[0].expiry_date)} · ₹{num(m.batches[0].selling_rate_per_base).toFixed(2)}/{m.base_unit_name}
                           {m.batches.length > 1 && ` · +${m.batches.length - 1} more batch(es)`}
                         </div>
-                      ) : (
-                        <div className="text-[11px] text-rose-400 mt-0.5">No saleable batch</div>
                       )}
                     </button>
                   ))}
