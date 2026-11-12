@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { BellRing, HandCoins, Search } from "lucide-react";
+import { BellRing, HandCoins, Printer, Search } from "lucide-react";
 import {
   Badge, Btn, Card, ErrorBox, Notice, SalesShell, Stat, Table, errorText, inputCls, isoToday, openTabNow, sendTabTo, td,
   tdNum, useStaff,
 } from "@/components/sales-ui";
-import { InvoiceListItem, Message, ReminderCandidate, fmtDate, fmtDateTime, money, num, salesApi } from "@/lib/sales-api";
+import { InvoiceListItem, Message, PaymentResult, ReminderCandidate, fmtDate, fmtDateTime, money, num, salesApi } from "@/lib/sales-api";
 
 const BUCKETS: [string, string][] = [
   ["not_due", "Not yet due"], ["days_1_30", "1–30 days"], ["days_31_60", "31–60 days"], ["days_61_90", "61–90 days"], ["days_over_90", "Over 90 days"],
@@ -21,6 +21,9 @@ export default function ReceivablesPage() {
   const [outstanding, setOutstanding] = useState("0");
   const [aging, setAging] = useState<Record<string, string> | null>(null);
   const [pending, setPending] = useState<Message[]>([]);
+  const [payQ, setPayQ] = useState("");
+  const [payMethod, setPayMethod] = useState("");
+  const [payments, setPayments] = useState<PaymentResult[]>([]);
   const [scan, setScan] = useState<{ dry: boolean; results: ReminderCandidate[] } | null>(null);
   const [scanDate, setScanDate] = useState(isoToday());
   const [error, setError] = useState<string | null>(null);
@@ -33,10 +36,13 @@ export default function ReceivablesPage() {
       setOutstanding(r.total_outstanding);
       setAging((await salesApi.aging()).totals);
       if (can("messaging.send")) setPending((await salesApi.outbox({ status: "PENDING", limit: 50 })).items);
+      if (can("payments.receive")) {
+        setPayments((await salesApi.customerPayments({ q: payQ.trim() || undefined, method: payMethod || undefined, limit: 50 })).items);
+      }
     } catch (e) {
       setError(errorText(e));
     }
-  }, [q, overdueOnly, can]);
+  }, [q, overdueOnly, can, payQ, payMethod]);
 
   useEffect(() => {
     if (!user) return;
@@ -123,6 +129,40 @@ export default function ReceivablesPage() {
               ))}
             </Table>
           </div>
+        </Card>
+      )}
+
+      {can("payments.receive") && (
+        <Card title="Payment history" actions={
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <input className={`${inputCls} pl-9 w-48`} placeholder="Receipt number" value={payQ} onChange={(e) => setPayQ(e.target.value)} />
+            </div>
+            <select className={`${inputCls} w-36`} value={payMethod} onChange={(e) => setPayMethod(e.target.value)} aria-label="Payment method">
+              <option value="">All methods</option>
+              {["CASH", "UPI", "CARD", "BANK_TRANSFER", "OTHER"].map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+        }>
+          <Table head={["Receipt", "Date", "Method", "Amount", "Advance", "Status", ""]} empty={payments.length === 0 && "No payments match."}>
+            {payments.map((p) => (
+              <tr key={p.id}>
+                <td className={`${td} font-mono text-xs`}>{p.receipt_number}</td>
+                <td className={`${td} text-xs text-slate-400`}>{p.received_at ? fmtDateTime(p.received_at) : ""}</td>
+                <td className={td}>{p.method}{p.reference ? <div className="text-[11px] text-slate-500">{p.reference}</div> : null}</td>
+                <td className={tdNum}>{money(p.amount)}</td>
+                <td className={tdNum}>{num(p.unapplied_amount) > 0 ? money(p.unapplied_amount) : ""}</td>
+                <td className={td}><Badge value={p.status || "POSTED"} /></td>
+                <td className={td}>
+                  <span className="flex gap-2 text-xs whitespace-nowrap">
+                    <button className="text-emerald-300 hover:underline" onClick={() => window.open(`/customers/payments/${p.id}/print?layout=thermal&auto=1`, "_blank")}><Printer className="w-3 h-3 inline" /> Receipt</button>
+                    <a className="text-slate-300 hover:underline" href={salesApi.paymentPdfUrl(p.id)}>PDF</a>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </Table>
         </Card>
       )}
 

@@ -641,6 +641,16 @@ export default function PosPage() {
               <Field label="Cash received (F8)" hint="Leave blank to sell on credit to the selected customer">
                 <input ref={payRef} inputMode="decimal" className={`${inputCls} text-lg font-mono`} value={draft.cashTendered}
                   onChange={(e) => update({ cashTendered: e.target.value.replace(/[^0-9.]/g, "") })} placeholder={total ? total.toFixed(2) : "0.00"} />
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {[["Exact", total ? total.toFixed(2) : ""], ["₹100", "100"], ["₹200", "200"], ["₹500", "500"], ["₹1000", "1000"], ["₹2000", "2000"]].map(([label, v]) => (
+                    <button key={label} type="button" disabled={!v}
+                      onClick={() => update({ cashTendered: v })}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 disabled:opacity-40">
+                      {label}
+                    </button>
+                  ))}
+                  {draft.cashTendered && <button type="button" onClick={() => update({ cashTendered: "" })} className="px-2.5 py-1 rounded-lg text-xs text-slate-500 hover:text-slate-300">Clear</button>}
+                </div>
               </Field>
             )}
             {(draft.mode === "UPI" || draft.mode === "CARD") && (

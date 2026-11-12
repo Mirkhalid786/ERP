@@ -6,7 +6,7 @@
  * Postings to the general ledger happen in the backend (app.services.gl_posting).
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Wallet } from "lucide-react";
+import { Printer, Wallet } from "lucide-react";
 import {
   Badge, Btn, Card, ErrorBox, Field, Modal, Notice, SalesShell, Stat, Table, errorText, inputCls, isoToday, td, tdNum, useStaff,
 } from "@/components/sales-ui";
@@ -47,6 +47,8 @@ export default function PayablesPage() {
   const [bills, setBills] = useState<SupplierInvoiceResponse[]>([]);
   const [billFilter, setBillFilter] = useState("");
   const [payments, setPayments] = useState<SupplierPayment[]>([]);
+  const [payQ, setPayQ] = useState("");
+  const [payMethod, setPayMethod] = useState("");
   const [notes, setNotes] = useState<CreditNote[]>([]);
   const [cn, setCn] = useState<{ key: string; supplier_id: number | ""; credit_note_number: string; note_date: string; invoice_id: string;
     reason_code: string; taxable_amount: string; cgst_amount: string; sgst_amount: string; igst_amount: string; notes: string } | null>(null);
@@ -67,7 +69,7 @@ export default function PayablesPage() {
     try {
       setBills(await api.getSupplierInvoices({ status: billFilter || undefined, limit: 200 }));
       if (can("supplier_payments.view")) {
-        setPayments((await payablesApi.payments({ limit: 100 })).items);
+        setPayments((await payablesApi.payments({ limit: 100, q: payQ.trim() || undefined, method: payMethod || undefined })).items);
         setNotes(await payablesApi.creditNotes());
         setBalances(await payablesApi.balances());
         setRecon(await payablesApi.reconciliation());
@@ -75,7 +77,7 @@ export default function PayablesPage() {
     } catch (e) {
       setError(errorText(e));
     }
-  }, [billFilter, can]);
+  }, [billFilter, can, payQ, payMethod]);
 
   useEffect(() => { if (user && canView) load(); }, [user, canView, load]);
   useEffect(() => { if (user) api.getSuppliers({ limit: 200 }).then(setSuppliers).catch(() => undefined); }, [user]);
@@ -135,6 +137,10 @@ export default function PayablesPage() {
 
   const allocTotal = useMemo(() => Object.values(pay?.alloc || {}).reduce((s, v) => s + toPaise(v), 0), [pay]);
   const advance = pay ? toPaise(pay.amount) - allocTotal : 0;
+  const openTotal = useMemo(() => open.reduce((s, o) => s + num(o.outstanding), 0), [open ]);
+  const manualAlloc = !!pay && Object.values(pay.alloc).some((v) => toPaise(v) > 0);
+  // With no manual allocations the server auto-allocates oldest-due-first.
+  const effAlloc = pay ? (manualAlloc ? allocTotal / 100 : Math.min(num(pay.amount), openTotal)) : 0;
   const needsRef = !!pay && REFERENCE_REQUIRED.includes(pay.method);
   const payInvalid = !pay || !pay.supplier_id || !(num(pay.amount) > 0) || advance < 0 || (needsRef && !pay.reference.trim()) ||
     (pay.method === "CASH" && !pay.cash_source) ||
@@ -163,6 +169,7 @@ export default function PayablesPage() {
         idempotency_key: pay.key, supplier_id: pay.supplier_id, payment_date: pay.payment_date, method: pay.method,
         cash_source: pay.method === "CASH" ? pay.cash_source : null, amount: pay.amount, reference: pay.reference || null,
         bank_account: pay.bank_account || null, notes: pay.notes || null, allocations: allocations.length ? allocations : null,
+        auto_allocate: allocations.length === 0,
         confirm_duplicate: pay.confirm_duplicate,
       });
       setInfo(res.replayed ? `Payment ${res.payment_number} was already recorded.` : `Payment ${res.payment_number} recorded.`);
@@ -256,7 +263,16 @@ export default function PayablesPage() {
           )}
 
           {tab === "payments" && (
-            <Card title="Supplier payments" actions={can("supplier_payments.create") && <Btn variant="primary" onClick={() => startPay("")}>Record payment</Btn>}>
+            <Card title="Supplier payments" actions={
+              <div className="flex items-center gap-2">
+                <input className={`${inputCls} w-44`} placeholder="Voucher number" value={payQ} onChange={(e) => setPayQ(e.target.value)} aria-label="Search by voucher number" />
+                <select className={`${inputCls} w-36`} value={payMethod} onChange={(e) => setPayMethod(e.target.value)} aria-label="Payment method">
+                  <option value="">All methods</option>
+                  {PAYMENT_METHODS.map(([v, label]) => <option key={v} value={v}>{label.split(" (")[0]}</option>)}
+                </select>
+                {can("supplier_payments.create") && <Btn variant="primary" onClick={() => startPay("")}>Record payment</Btn>}
+              </div>
+            }>
               <Table head={["Number", "Supplier", "Date", "Method", "Amount ₹", "Allocated to", "Status", ""]} empty={payments.length === 0 && "No supplier payments yet."}>
                 {payments.map((p) => (
                   <tr key={p.id} className={p.status === "REVERSED" ? "opacity-60" : ""}>
@@ -279,6 +295,8 @@ export default function PayablesPage() {
                     </td>
                     <td className={td}>
                       <div className="flex flex-wrap gap-1 justify-end">
+                        <Btn variant="ghost" onClick={() => window.open(`/payables/payments/${p.id}/print?layout=thermal&auto=1`, "_blank")}><Printer className="w-3.5 h-3.5" /> Voucher</Btn>
+                        <a className="inline-flex items-center px-2 py-1 text-xs text-slate-300 hover:underline" href={payablesApi.paymentPdfUrl(p.id)}>PDF</a>
                         {p.status === "POSTED" && num(p.unallocated) > 0 && can("supplier_payments.create") && (
                           <Btn variant="ghost" onClick={() => run(() => payablesApi.allocate(p.id, null), "Advance allocated to the oldest open bills.")}>Allocate advance</Btn>
                         )}
@@ -488,6 +506,7 @@ export default function PayablesPage() {
                 <div className={`text-sm mt-1 ${advance < 0 ? "text-rose-300" : "text-slate-400"}`}>
                   Allocated {money(allocTotal / 100)}{advance > 0 && ` · ${money(advance / 100)} stays as an advance to ${supplierName(Number(pay.supplier_id))}`}
                   {advance < 0 && " · allocations are more than the payment"}
+                  {open.length > 0 && <span className="block text-xs mt-0.5">Payable after this payment: {money(Math.max(0, openTotal - effAlloc))} (of {money(openTotal)} open now).{!manualAlloc && " No bills picked — the payment auto-allocates oldest-due-first."}</span>}
                 </div>
               </div>
             )}

@@ -8,7 +8,7 @@ import {
   Badge, Btn, Card, ErrorBox, Field, Modal, Notice, SalesShell, Spinner, Stat, Table, errorText, inputCls, openTabNow, sendTabTo,
   td, tdNum, useStaff,
 } from "@/components/sales-ui";
-import { CustomerStatement, fmtDate, fmtDateTime, money, newKey, num, salesApi } from "@/lib/sales-api";
+import { CustomerStatement, PaymentResult, fmtDate, fmtDateTime, money, newKey, num, salesApi } from "@/lib/sales-api";
 
 export default function CustomerLedgerPage() {
   const { id } = useParams<{ id: string }>();
@@ -111,7 +111,7 @@ export default function CustomerLedgerPage() {
         </div>
       }>
         <div className="text-xs text-slate-400 mb-2">Opening balance {money(st.opening_balance)} · debits {money(st.total_debits)} · credits {money(st.total_credits)} · closing {money(st.closing_balance)}</div>
-        <Table head={["Date", "Type", "Reference", "Details", "Debit ₹", "Credit ₹", "Balance ₹"]} empty={st.entries.length === 0 && "No entries in this period."}>
+        <Table head={["Date", "Type", "Reference", "Details", "Debit ₹", "Credit ₹", "Balance ₹", ""]} empty={st.entries.length === 0 && "No entries in this period."}>
           {st.entries.map((e) => (
             <tr key={e.id}>
               <td className={`${td} text-xs text-slate-400 whitespace-nowrap`}>{fmtDateTime(e.created_at)}</td>
@@ -121,6 +121,14 @@ export default function CustomerLedgerPage() {
               <td className={tdNum}>{num(e.debit) ? money(e.debit) : ""}</td>
               <td className={tdNum}>{num(e.credit) ? money(e.credit) : ""}</td>
               <td className={tdNum}>{money(e.balance)}</td>
+              <td className={td}>
+                {e.entry_type === "PAYMENT" && e.payment_id && (
+                  <span className="flex gap-2 text-xs whitespace-nowrap">
+                    <button className="text-emerald-300 hover:underline" onClick={() => window.open(`/customers/payments/${e.payment_id}/print?layout=thermal&auto=1`, "_blank")}><Printer className="w-3 h-3 inline" /> Receipt</button>
+                    <a className="text-slate-300 hover:underline" href={salesApi.paymentPdfUrl(e.payment_id)}>PDF</a>
+                  </span>
+                )}
+              </td>
             </tr>
           ))}
         </Table>
@@ -139,15 +147,30 @@ function CollectModal({ st, open, onClose, onDone }: { st: CustomerStatement; op
   const [manual, setManual] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [done, setDone] = useState<PaymentResult | null>(null);
   useEffect(() => {
     if (open) {
       setForm({ method: "CASH", amount: num(st.customer.outstanding_balance) > 0 ? st.customer.outstanding_balance : "", tendered: "", reference: "", key: newKey() });
       setAlloc({});
       setManual(false);
       setErr(null);
+      setDone(null);
     }
   }, [open, st.customer.outstanding_balance]);
   const allocTotal = Object.values(alloc).reduce((s, v) => s + num(v), 0);
+  // Preview of the server's oldest-due-first allocation (display only — the
+  // server remains authoritative and returns the actual allocation).
+  const autoPreview = (() => {
+    let left = num(form.amount);
+    const rows: { number: string; due: string | null; amount: number }[] = [];
+    const sorted = [...st.open_invoices].sort((a, b) => String(a.due_date || "9999").localeCompare(String(b.due_date || "9999")));
+    for (const inv of sorted) {
+      if (left <= 0) break;
+      const take = Math.min(left, num(inv.balance_due));
+      if (take > 0) { rows.push({ number: inv.invoice_number, due: inv.due_date ?? null, amount: take }); left -= take; }
+    }
+    return { rows, advance: left };
+  })();
   const save = async () => {
     setBusy(true);
     setErr(null);
@@ -158,13 +181,33 @@ function CollectModal({ st, open, onClose, onDone }: { st: CustomerStatement; op
         reference: form.reference || undefined,
         allocations: manual ? Object.entries(alloc).filter(([, v]) => num(v) > 0).map(([k, v]) => ({ invoice_id: Number(k), amount: v })) : null,
       });
-      onDone(`Receipt ${r.receipt_number}: ${money(r.amount)} received${num(r.unapplied_amount) ? `, ${money(r.unapplied_amount)} kept as advance` : ""}${num(r.change_returned) ? ` · change ${money(r.change_returned)}` : ""}.`);
+      setDone(r);
     } catch (e) {
       setErr(errorText(e));
     } finally {
       setBusy(false);
     }
   };
+  if (done) {
+    return (
+      <Modal open={open} title={`Receipt ${done.receipt_number}`} onClose={onClose}>
+        <div className="space-y-3">
+          <div className="text-emerald-300 text-sm">{done.replayed ? "This payment was already recorded (retry returned the original receipt)." : "Payment recorded."}</div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="bg-slate-950 rounded-lg p-2"><div className="text-[10px] text-slate-500">Received</div><div className="font-mono">{money(done.amount)}</div></div>
+            <div className="bg-slate-950 rounded-lg p-2"><div className="text-[10px] text-slate-500">Advance</div><div className="font-mono">{money(done.unapplied_amount)}</div></div>
+            <div className="bg-slate-950 rounded-lg p-2"><div className="text-[10px] text-slate-500">Change</div><div className="font-mono">{money(done.change_returned)}</div></div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Btn variant="primary" onClick={() => window.open(`/customers/payments/${done.id}/print?layout=thermal&auto=1`, "_blank")}><Printer className="w-4 h-4" /> Print receipt</Btn>
+            <Btn onClick={() => window.open(`/customers/payments/${done.id}/print?layout=a4&auto=1`, "_blank")}>A4 receipt</Btn>
+            <a className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold border bg-slate-800 border-slate-700" href={salesApi.paymentPdfUrl(done.id)}>PDF</a>
+            <Btn variant="ghost" onClick={() => onDone(`Receipt ${done.receipt_number}: ${money(done.amount)} received${num(done.unapplied_amount) ? `, ${money(done.unapplied_amount)} kept as advance` : ""}.`)}>Done</Btn>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
   return (
     <Modal open={open} title={`Receive payment from ${st.customer.name}`} onClose={onClose} wide>
       <ErrorBox message={err} />
@@ -191,6 +234,19 @@ function CollectModal({ st, open, onClose, onDone }: { st: CustomerStatement; op
             </div>
           ))}
           <div className="text-xs text-slate-400">Allocated {money(allocTotal)} of {money(form.amount || 0)}; the rest becomes advance credit.</div>
+        </div>
+      )}
+      {!manual && num(form.amount) > 0 && (
+        <div className="space-y-1 text-sm">
+          <div className="text-xs text-slate-400">How this payment will be applied (oldest due first):</div>
+          {autoPreview.rows.map((r) => (
+            <div key={r.number} className="flex items-center gap-2">
+              <span className="font-mono flex-1">{r.number} · due {fmtDate(r.due)}</span>
+              <span className="font-mono">{money(r.amount)}</span>
+            </div>
+          ))}
+          {autoPreview.rows.length === 0 && <div className="text-xs text-slate-400">No open invoices — the full amount becomes advance credit.</div>}
+          {autoPreview.advance > 0 && <div className="text-xs text-sky-300">Advance credit after this payment: {money(autoPreview.advance)}</div>}
         </div>
       )}
       <div className="flex justify-end gap-2">

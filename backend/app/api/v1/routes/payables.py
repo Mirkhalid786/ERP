@@ -48,6 +48,8 @@ async def _payment_out(db: AsyncSession, payment: SupplierPayment) -> dict:
 @router.get("/supplier-payments")
 async def list_supplier_payments(
     supplier_id: Optional[int] = None,
+    q: Optional[str] = Query(None, max_length=100),
+    method: Optional[str] = Query(None, max_length=20),
     status_filter: Optional[str] = Query(None, alias="status"),
     date_from: Optional[date] = None,
     date_to: Optional[date] = None,
@@ -58,6 +60,10 @@ async def list_supplier_payments(
 ):
     stmt = select(SupplierPayment).options(selectinload(SupplierPayment.allocations)).where(
         SupplierPayment.pharmacy_id == ctx.pharmacy_id)
+    if q:
+        stmt = stmt.where(SupplierPayment.payment_number.ilike(f"%{q.strip()}%"))
+    if method:
+        stmt = stmt.where(SupplierPayment.method == method.upper())
     if supplier_id:
         stmt = stmt.where(SupplierPayment.supplier_id == supplier_id)
     if status_filter:
@@ -122,6 +128,31 @@ async def get_supplier_payment(
     db: AsyncSession = Depends(get_db),
 ):
     return decimal_json(await _payment_out(db, await supplier_payments.get_payment(db, ctx.pharmacy_id, payment_id)))
+
+
+@router.get("/supplier-payments/{payment_id}/document")
+async def supplier_payment_voucher_document(
+    payment_id: int,
+    ctx: AuthContext = Depends(require_context("supplier_payments.view")),
+    db: AsyncSession = Depends(get_db),
+):
+    """Everything a supplier payment voucher prints: header, bill-wise
+    allocations, payable after the payment and advance. Read-only."""
+    from app.services import payment_docs
+    return decimal_json(await payment_docs.supplier_voucher_document(db, ctx.pharmacy_id, payment_id))
+
+
+@router.get("/supplier-payments/{payment_id}/document.pdf")
+async def supplier_payment_voucher_pdf(
+    payment_id: int,
+    ctx: AuthContext = Depends(require_context("supplier_payments.view")),
+    db: AsyncSession = Depends(get_db),
+):
+    from fastapi.responses import Response
+    from app.services import payment_pdf
+    content, filename = await payment_pdf.supplier_voucher_pdf_bytes(db, ctx.pharmacy_id, payment_id)
+    return Response(content=content, media_type="application/pdf",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"'})
 
 
 @router.post("/supplier-payments/{payment_id}/allocate")

@@ -37,6 +37,35 @@ export interface SupplierPayment {
   allocations: Allocation[];
 }
 
+export interface VoucherDocument {
+  kind: string;
+  title: string;
+  pharmacy: {
+    name: string; legal_name?: string | null; address_line1?: string | null; city?: string | null;
+    pincode?: string | null; phone?: string | null; email?: string | null; gstin?: string | null;
+    drug_license_number?: string | null;
+  };
+  id: number;
+  payment_number: string;
+  status: string;
+  is_reversed: boolean;
+  payment_date: string;
+  created_at: string;
+  method: string;
+  reference?: string | null;
+  bank_account?: string | null;
+  amount: Money;
+  supplier?: { id: number; name: string; legal_name?: string | null; phone?: string | null; gstin?: string | null; address?: string | null } | null;
+  allocations: { invoice_id: number; invoice_number?: string | null; amount: Money; status: string }[];
+  allocated_total: Money;
+  advance_unallocated: Money;
+  payable_after: Money;
+  recorded_by?: string | null;
+  reversed_by?: string | null;
+  reversal_reason?: string | null;
+  notes?: string | null;
+}
+
 export interface OpenInvoice {
   id: number;
   invoice_number: string;
@@ -177,8 +206,10 @@ export const payablesApi = {
   finalize: (id: number, acknowledge_warnings: boolean) => post(`/api/v1/purchases/invoices/${id}/finalize`, { acknowledge_warnings }),
   cancelInvoice: (id: number, reason: string) => post(`/api/v1/purchases/invoices/${id}/cancel`, { reason }),
 
-  payments: (p: { supplier_id?: number; status?: string; limit?: number; offset?: number }) =>
+  payments: (p: { supplier_id?: number; q?: string; method?: string; status?: string; date_from?: string; date_to?: string; limit?: number; offset?: number }) =>
     fetchJson<{ total: number; items: SupplierPayment[] }>(`/api/v1/supplier-payments${qs(p)}`),
+  paymentDocument: (id: number | string) => fetchJson<VoucherDocument>(`/api/v1/supplier-payments/${id}/document`),
+  paymentPdfUrl: (id: number | string) => `/api/v1/supplier-payments/${id}/document.pdf`,
   recordPayment: (body: PaymentInput) => post<SupplierPayment & { replayed: boolean }>("/api/v1/supplier-payments", body),
   allocate: (id: number, allocations: { invoice_id: number; amount: string }[] | null) =>
     post<SupplierPayment>(`/api/v1/supplier-payments/${id}/allocate`, { allocations }),

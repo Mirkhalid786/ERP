@@ -487,7 +487,7 @@ async def statement(db: AsyncSession, pharmacy_id: int, customer_id: int,
         entries.append(LedgerEntryResponse(
             id=r.id, created_at=r.created_at, entry_type=r.entry_type, reference=r.reference,
             description=r.description, debit=r.debit, credit=r.credit, balance=running,
-            invoice_id=r.invoice_id, reason=r.reason,
+            invoice_id=r.invoice_id, payment_id=r.payment_id, reason=r.reason,
         ))
     return opening, running, money(debits), money(credits), entries
 

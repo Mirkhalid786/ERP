@@ -320,6 +320,7 @@ export interface LedgerEntry {
   credit: Money;
   balance: Money;
   invoice_id?: number | null;
+  payment_id?: number | null;
   reason?: string | null;
 }
 
@@ -337,12 +338,57 @@ export interface CustomerStatement {
 export interface PaymentResult {
   id: number;
   receipt_number: string;
+  customer_id?: number | null;
+  source?: string;
   method: string;
   amount: Money;
+  amount_tendered?: Money | null;
   change_returned: Money;
+  refunded_amount?: Money;
   unapplied_amount: Money;
+  reference?: string | null;
+  status?: string;
+  received_at?: string;
   replayed: boolean;
   allocations: { invoice_id: number; amount: Money }[];
+}
+
+export interface PharmacyHeader {
+  name: string;
+  legal_name?: string | null;
+  address_line1?: string | null;
+  city?: string | null;
+  pincode?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  gstin?: string | null;
+  drug_license_number?: string | null;
+}
+
+export interface ReceiptDocument {
+  kind: string;
+  title: string;
+  pharmacy: PharmacyHeader;
+  id: number;
+  receipt_number: string;
+  status: string;
+  is_reversed: boolean;
+  source: string;
+  received_at: string;
+  method: string;
+  reference?: string | null;
+  amount: Money;
+  amount_tendered?: Money | null;
+  change_returned: Money;
+  refunded_amount: Money;
+  customer?: { id: number; name: string; mobile?: string | null; gstin?: string | null; address?: string | null } | null;
+  allocations: { invoice_id: number; invoice_number: string; invoice_date: string; amount: Money }[];
+  allocated_total: Money;
+  advance_unapplied: Money;
+  balance_after?: Money | null;
+  advance_after?: Money | null;
+  received_by?: string | null;
+  notes?: string | null;
 }
 
 // ── Returns ───────────────────────────────────────────────────────────────────
@@ -525,6 +571,10 @@ export const salesApi = {
   receivePayment: (id: number, body: { idempotency_key: string; method: string; amount: string; tendered?: string; reference?: string; allocations?: { invoice_id: number; amount: string }[] | null; notes?: string }) =>
     post<PaymentResult>(`/api/v1/customers/${id}/payments`, body),
   applyCredit: (id: number) => post<{ applied: { invoice_number: string; amount: Money }[] }>(`/api/v1/customers/${id}/apply-credit`, {}),
+  customerPayments: (p: { q?: string; customer_id?: number; method?: string; status?: string; date_from?: string; date_to?: string; limit?: number; offset?: number }) =>
+    fetchJson<Paged<PaymentResult>>(`/api/v1/sales/payments${qs(p)}`),
+  paymentDocument: (id: number | string) => fetchJson<ReceiptDocument>(`/api/v1/sales/payments/${id}/document`),
+  paymentPdfUrl: (id: number | string) => `/api/v1/sales/payments/${id}/document.pdf`,
   adjustment: (id: number, body: { invoice_id: number; adjustment_type: string; amount: string; reason: string }) =>
     post(`/api/v1/customers/${id}/adjustments`, body),
 

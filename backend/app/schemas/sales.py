@@ -382,6 +382,7 @@ class LedgerEntryResponse(BaseModel):
     credit: Decimal
     balance: Decimal
     invoice_id: Optional[int] = None
+    payment_id: Optional[int] = None
     reason: Optional[str] = None
 
 

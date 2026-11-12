@@ -75,6 +75,67 @@ async def get_return(
 
 # ── Payments ───────────────────────────────────────────────────────────────────
 
+@router.get("/sales/payments")
+async def list_payments(
+    q: Optional[str] = Query(None, max_length=100),
+    customer_id: Optional[int] = None,
+    method: Optional[str] = Query(None, max_length=20),
+    status_filter: Optional[str] = Query(None, alias="status", max_length=20),
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    ctx: AuthContext = Depends(require_context("payments.receive")),
+    db: AsyncSession = Depends(get_db),
+):
+    """Payment history across customers: search by receipt number, filter by
+    customer / method / status / date range. Reversed payments stay visible."""
+    from app.models.sales import CustomerPayment
+    stmt = select(CustomerPayment).where(CustomerPayment.pharmacy_id == ctx.pharmacy_id)
+    if q:
+        stmt = stmt.where(CustomerPayment.receipt_number.ilike(f"%{q.strip()}%"))
+    if customer_id:
+        stmt = stmt.where(CustomerPayment.customer_id == customer_id)
+    if method:
+        stmt = stmt.where(CustomerPayment.method == method.upper())
+    if status_filter:
+        stmt = stmt.where(CustomerPayment.status == status_filter.upper())
+    if date_from:
+        stmt = stmt.where(func.date(CustomerPayment.received_at) >= date_from)
+    if date_to:
+        stmt = stmt.where(func.date(CustomerPayment.received_at) <= date_to)
+    total = (await db.execute(select(func.count()).select_from(stmt.subquery()))).scalar_one()
+    rows = (await db.execute(stmt.order_by(CustomerPayment.received_at.desc(), CustomerPayment.id.desc())
+                             .limit(limit).offset(offset))).scalars().all()
+    items = [await receivables.payment_response(db, p) for p in rows]
+    return decimal_json({"total": total, "items": [i.model_dump() for i in items]})
+
+
+@router.get("/sales/payments/{payment_id}/document")
+async def payment_receipt_document(
+    payment_id: int,
+    ctx: AuthContext = Depends(require_context("payments.receive")),
+    db: AsyncSession = Depends(get_db),
+):
+    """Everything a customer payment receipt prints: header, allocations,
+    balance after the payment and advance. Read-only."""
+    from app.services import payment_docs
+    return decimal_json(await payment_docs.customer_receipt_document(db, ctx.pharmacy_id, payment_id))
+
+
+@router.get("/sales/payments/{payment_id}/document.pdf")
+async def payment_receipt_pdf(
+    payment_id: int,
+    ctx: AuthContext = Depends(require_context("payments.receive")),
+    db: AsyncSession = Depends(get_db),
+):
+    from fastapi.responses import Response
+    from app.services import payment_pdf
+    content, filename = await payment_pdf.customer_receipt_pdf_bytes(db, ctx.pharmacy_id, payment_id)
+    return Response(content=content, media_type="application/pdf",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
 @router.post("/sales/payments/{payment_id}/verify", response_model=PaymentResponse)
 async def verify_payment(
     payment_id: int,
